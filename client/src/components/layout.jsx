@@ -7,7 +7,7 @@ function Layout() {
   return (
     <div>
       <CssBaseline />
-      <Header />
+      {/* <Header /> */}
       <Sidebar />
     </div>
   );

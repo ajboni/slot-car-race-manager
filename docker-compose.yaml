@@ -3,8 +3,10 @@ services:
   postgres:
     image: postgres
     restart: always
+    ports:
+      - "${POSTGRES_PORT}:5432"
     volumes:
-      - ~/docker/volumes/scram2-db:/var/lib/postgresql/data
+      - ./docker/volumes/scram-db:/var/lib/postgresql/data
       # uncomment for initial schema + data
       # TODO: spearate schema from data
       # - docker/init.sql:/docker-entrypoint-initdb.d/01_schema.sql
@@ -13,7 +15,7 @@ services:
   graphql-engine:
     image: hasura/graphql-engine:v1.0.0-beta.2
     ports:
-      - "10000:8080"
+      - "${HASURA_PORT}:8080"
     depends_on:
       - "postgres"
     restart: always

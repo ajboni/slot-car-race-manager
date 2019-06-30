@@ -1,5 +1,7 @@
-import { camelCase, sentenceCase } from "./string-utils";
+import { sentenceCase } from "./string-utils";
 import _ from "lodash";
+import store from "../store";
+import { computed } from "mobx";
 export const lang = {
   eng: {
     scramTitle: "Slot Car Race Manager",
@@ -16,7 +18,8 @@ export const lang = {
     edit: "editar",
     settings: "opciones",
     stats: "estadisticas",
-    ruleset: "reglas"
+    ruleset: "reglas",
+    home: "Inicio"
   }
 };
 
@@ -25,20 +28,22 @@ export const languages = {
     id: "spa",
     label: "spa",
     icon: "AL",
-    code: "arg"
+    flag: "arg",
+    pos: "left"
   },
   eng: {
     id: "eng",
     label: "eng",
     icon: "AL",
-    code: "usa"
+    flag: "usa",
+    pos: "right"
   }
 };
 
+// Returns a localizated string
 export function get(key) {
-  // TODO: fetch active language
-  const activeLanguage = "eng";
-  let result = lang[activeLanguage][key];
+  const activeLanguage = store.language;
+  let result = lang[activeLanguage.id][key];
 
   // Falback #1
   if (_.isEmpty(result)) {
@@ -53,11 +58,10 @@ export function get(key) {
   return result;
 }
 
-export const activeLang = "eng";
-export const scramTitle = get("scramTitle");
-export const home = get("home");
-export const race = get("race");
-export const racers = get("racers");
-export const ruleset = get("ruleset");
-export const settings = get("settings");
-export const stats = get("stats");
+export const scramTitle = "scramTitle";
+export const home = "home";
+export const race = "race";
+export const racers = "racers";
+export const ruleset = "ruleset";
+export const settings = "settings";
+export const stats = "stats";

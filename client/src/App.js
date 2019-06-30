@@ -2,8 +2,8 @@ import React from "react";
 import Layout from "./components/layout";
 
 import { createMuiTheme } from "@material-ui/core/styles";
-import { teal } from "@material-ui/core/colors";
 import { ThemeProvider } from "@material-ui/styles";
+import Store from "./store";
 
 const theme = createMuiTheme({
   palette: {

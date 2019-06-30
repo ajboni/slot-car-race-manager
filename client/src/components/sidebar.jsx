@@ -6,14 +6,17 @@ import Divider from "@material-ui/core/Divider";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-import InboxIcon from "@material-ui/icons/MoveToInbox";
-import MailIcon from "@material-ui/icons/Mail";
 import { routes } from "../constants/routes";
 import { languages } from "../constants/constants";
 import * as c from "../constants/constants";
 import Flag from "react-world-flags";
-import { IconButton, Button, ButtonGroup, Icon } from "@material-ui/core";
+
+import { Button, ButtonGroup, Icon } from "@material-ui/core";
+import ToggleButton from "@material-ui/lab/ToggleButton";
+import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
 import logo from "../img/car.png";
+import store from "../store";
+import { observer } from "mobx-react";
 
 const drawerWidth = 240;
 
@@ -32,10 +35,16 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(1),
     width: "25px"
   },
+  toggleContainer: {
+    margin: theme.spacing(2, 0)
+  },
   toolbar: theme.mixins.toolbar
 }));
 
-function Sidebar() {
+const langs = Object.keys(languages);
+console.log(langs);
+
+const Sidebar = observer(() => {
   const classes = useStyles();
   return (
     <Drawer
@@ -47,7 +56,6 @@ function Sidebar() {
       anchor="left"
     >
       <img src={logo} style={{ width: "100%", height: "100" }} />
-
       {/* <div className={classes.toolbar}>
       </div> */}
       <Divider />
@@ -57,33 +65,30 @@ function Sidebar() {
             <ListItemIcon>
               <Icon>{route.icon}</Icon>
             </ListItemIcon>
-            <ListItemText primary={route.label} />
+            <ListItemText primary={c.get(route.label)} />
           </ListItem>
         ))}
       </List>
       <Divider />
-
-      <ButtonGroup
+      <ToggleButtonGroup
         size="small"
         style={{ alignSelf: "center", marginTop: "20px" }}
+        exclusive
+        value={store.language.id}
       >
-        {Object.keys(languages).map(key => (
-          <Button
-            variant="contained"
-            color="default"
-            className={classes.button}
+        {langs.map(key => (
+          <ToggleButton
+            value={languages[key].id}
+            key={languages[key].id}
+            onClick={e => store.setLanguage(e.currentTarget.value)}
           >
-            <Flag
-              code={languages[key].code}
-              fallback={<span>Unknown</span>}
-              className={classes.leftIcon}
-            />
+            <Flag code={languages[key].flag} className={classes.leftIcon} />
             {languages[key].label}
-          </Button>
+          </ToggleButton>
         ))}
-      </ButtonGroup>
+      </ToggleButtonGroup>
     </Drawer>
   );
-}
+});
 
 export default Sidebar;

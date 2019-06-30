@@ -4,7 +4,7 @@ import { Icon } from "@material-ui/core";
 export const routes = [
   {
     target: "/",
-    label: c.home,
+    label: "home",
     icon: "home"
   },
   {
@@ -28,7 +28,7 @@ export const routes = [
     icon: "dashboard"
   },
   {
-    target: c.settings,
+    target: "/settings",
     label: c.settings,
     icon: "settings"
   }

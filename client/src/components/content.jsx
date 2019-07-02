@@ -1,6 +1,12 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Route, Link, BrowserRouter as Router } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  Redirect
+} from "react-router-dom";
 import { routes } from "../constants/routes";
 
 const drawerWidth = 240;
@@ -26,13 +32,16 @@ function Content() {
   return (
     <main className={classes.content}>
       <div className={classes.toolbar} />
-      {routes.map(route => (
-        <Route
-          exact={route.exact}
-          path={route.target}
-          component={route.component}
-        />
-      ))}
+      <Switch>
+        {routes.map(route => (
+          <Route
+            exact={route.exact}
+            key={route.target}
+            path={route.target}
+            render={route.component}
+          />
+        ))}
+      </Switch>
     </main>
   );
 }

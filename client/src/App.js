@@ -1,6 +1,12 @@
 import React from "react";
 import Layout from "./components/layout";
-
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  Redirect
+} from "react-router-dom";
 import { createMuiTheme } from "@material-ui/core/styles";
 import { ThemeProvider } from "@material-ui/styles";
 import Store from "./store";
@@ -19,7 +25,9 @@ const theme = createMuiTheme({
 function App() {
   return (
     <ThemeProvider theme={theme}>
-      <Layout />
+      <Router>
+        <Layout />
+      </Router>
     </ThemeProvider>
   );
 }

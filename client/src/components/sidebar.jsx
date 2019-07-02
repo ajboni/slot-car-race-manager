@@ -17,6 +17,7 @@ import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
 import logo from "../img/car.png";
 import store from "../store";
 import { observer } from "mobx-react";
+import { Route, Link, BrowserRouter as Router } from "react-router-dom";
 
 const drawerWidth = 240;
 
@@ -37,6 +38,9 @@ const useStyles = makeStyles(theme => ({
   },
   toggleContainer: {
     margin: theme.spacing(2, 0)
+  },
+  a: {
+    textDecoration: "none"
   },
   toolbar: theme.mixins.toolbar
 }));
@@ -61,12 +65,14 @@ const Sidebar = observer(() => {
       <Divider />
       <List>
         {routes.map(route => (
-          <ListItem button key={route.target}>
-            <ListItemIcon>
-              <Icon>{route.icon}</Icon>
-            </ListItemIcon>
-            <ListItemText primary={c.get(route.label)} />
-          </ListItem>
+          <Link to={route.target} key={route.target}>
+            <ListItem button key={route.target}>
+              <ListItemIcon>
+                <Icon>{route.icon}</Icon>
+              </ListItemIcon>
+              <ListItemText primary={c.get(route.label)} />
+            </ListItem>
+          </Link>
         ))}
       </List>
       <Divider />

@@ -2,7 +2,7 @@ version: "3.6"
 services:
   postgres:
     image: postgres
-    restart: always
+    # restart: always
     ports:
       - "${POSTGRES_PORT}:5432"
     volumes:
@@ -11,6 +11,7 @@ services:
       # TODO: spearate schema from data
       # - docker/init.sql:/docker-entrypoint-initdb.d/01_schema.sql
       # - docker/init.sql:/docker-entrypoint-initdb.d/02_data.sql
+      - ./docker/schem_data.sql:/docker-entrypoint-initdb.d/02_data.sql
 
   graphql-engine:
     image: hasura/graphql-engine:v1.0.0-beta.2
@@ -18,7 +19,7 @@ services:
       - "${HASURA_PORT}:8080"
     depends_on:
       - "postgres"
-    restart: always
+    # restart: always
     environment:
       HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:@postgres:5432/postgres
       HASURA_GRAPHQL_ENABLE_CONSOLE: "true" # set to "false" to disable console

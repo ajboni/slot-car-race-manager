@@ -23,7 +23,8 @@ const drawerWidth = 240;
 
 const useStyles = makeStyles(theme => ({
   root: {
-    display: "flex"
+    display: "flex",
+    backgroundColor: "#333"
   },
   drawer: {
     width: drawerWidth,
@@ -46,7 +47,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const langs = Object.keys(languages);
-console.log(langs);
+// console.log(langs);
 
 const Sidebar = observer(() => {
   const classes = useStyles();
@@ -65,7 +66,11 @@ const Sidebar = observer(() => {
       <Divider />
       <List>
         {routes.map(route => (
-          <Link to={route.target} key={route.target}>
+          <Link
+            style={{ textDecoration: "none", color: "inherit" }}
+            to={route.target}
+            key={route.target}
+          >
             <ListItem button key={route.target}>
               <ListItemIcon>
                 <Icon>{route.icon}</Icon>

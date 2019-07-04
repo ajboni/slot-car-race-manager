@@ -31,14 +31,14 @@ function Content() {
   const classes = useStyles();
   return (
     <main className={classes.content}>
-      <div className={classes.toolbar} />
+      {/* <div className={classes.toolbar} /> */}
       <Switch>
         {routes.map(route => (
           <Route
             exact={route.exact}
             key={route.target}
             path={route.target}
-            render={route.component}
+            component={route.component}
           />
         ))}
       </Switch>

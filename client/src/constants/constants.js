@@ -19,7 +19,13 @@ export const lang = {
     settings: "opciones",
     stats: "estadisticas",
     ruleset: "reglas",
-    home: "Inicio"
+    home: "Inicio",
+    name: "nombre",
+    wins: "victorias",
+    emptyDataSourceMessage: "No hay datos para mostrar.",
+    search: "buscar",
+    actions: "acciones",
+    newUser: "Nuevo Usuario"
   }
 };
 
@@ -65,3 +71,9 @@ export const racers = "racers";
 export const ruleset = "ruleset";
 export const settings = "settings";
 export const stats = "stats";
+export const wins = "wins";
+export const name = "name";
+export const emptyDataSourceMessage = "No records to display.";
+export const search = "search";
+export const actions = "actions";
+export const newUser = "new user";

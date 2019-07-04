@@ -11,7 +11,7 @@ services:
       # TODO: spearate schema from data
       # - docker/init.sql:/docker-entrypoint-initdb.d/01_schema.sql
       # - docker/init.sql:/docker-entrypoint-initdb.d/02_data.sql
-      - ./docker/schem_data.sql:/docker-entrypoint-initdb.d/02_data.sql
+      # - ./docker/schem_data.sql:/docker-entrypoint-initdb.d/schem_data.sql
 
   graphql-engine:
     image: hasura/graphql-engine:v1.0.0-beta.2

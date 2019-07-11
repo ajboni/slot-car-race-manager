@@ -8,7 +8,6 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import { routes } from "../constants/routes";
 import { languages } from "../constants/constants";
-import * as c from "../constants/constants";
 import Flag from "react-world-flags";
 
 import { Button, ButtonGroup, Icon } from "@material-ui/core";
@@ -18,6 +17,7 @@ import logo from "../img/car.png";
 import store from "../store";
 import { observer } from "mobx-react";
 import { Route, Link, BrowserRouter as Router } from "react-router-dom";
+import l from "../constants/lang";
 
 const drawerWidth = 240;
 
@@ -75,7 +75,7 @@ const Sidebar = observer(() => {
               <ListItemIcon>
                 <Icon>{route.icon}</Icon>
               </ListItemIcon>
-              <ListItemText primary={c.get(route.label)} />
+              <ListItemText primary={route.label} />
             </ListItem>
           </Link>
         ))}

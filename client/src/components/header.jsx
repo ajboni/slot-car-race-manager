@@ -5,6 +5,7 @@ import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import * as c from "../constants/constants";
+import l from "../constants/lang";
 
 const drawerWidth = 240;
 
@@ -25,7 +26,7 @@ function Header() {
       <AppBar position="fixed" className={classes.appBar}>
         <Toolbar>
           <Typography variant="h6" noWrap>
-            {c.scramTitle}
+            {l.SCRAM_TITLE}
           </Typography>
         </Toolbar>
       </AppBar>

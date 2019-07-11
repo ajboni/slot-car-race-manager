@@ -19,6 +19,7 @@ import SaveAlt from "@material-ui/icons/SaveAlt";
 import Search from "@material-ui/icons/Search";
 import ViewColumn from "@material-ui/icons/ViewColumn";
 import { forwardRef } from "react";
+import l from "../constants/lang";
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -47,14 +48,14 @@ const tableIcons = {
 const DataTable = observer(({ data, columns, title, actions }) => {
   const localization = {
     body: {
-      emptyDataSourceMessage: c.get(c.emptyDataSourceMessage)
+      emptyDataSourceMessage: l.EMPTY_DATASOURCE_MESSAGE
     },
     toolbar: {
-      searchTooltip: c.get(c.search),
-      searchPlaceholder: c.get(c.search)
+      searchTooltip: l.SEARCH,
+      searchPlaceholder: l.SEARCH
     },
     header: {
-      actions: c.get(c.actions)
+      actions: l.ACTIONS
     }
   };
 
@@ -66,7 +67,7 @@ const DataTable = observer(({ data, columns, title, actions }) => {
       icons={tableIcons}
       actions={actions}
       localization={localization}
-      options={{toolbarButtonAlignment: 'left'}}
+      options={{ toolbarButtonAlignment: "left" }}
     />
   );
 });

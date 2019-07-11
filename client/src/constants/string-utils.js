@@ -7,50 +7,50 @@
  * "Safer" String.toLowerCase()
  */
 export function lowerCase(str) {
-    return str.toLowerCase();
-}
-
-/** 
- * "Safer" String.toUpperCase() 
- * */
-export function upperCase(str) {
-    return str.toUpperCase();
+  return str.toLowerCase();
 }
 
 /**
-* Convert string to camelCase text.
-*/
+ * "Safer" String.toUpperCase()
+ * */
+export function upperCase(str) {
+  return str.toUpperCase();
+}
+
+/**
+ * Convert string to camelCase text.
+ */
 export function camelCase(str) {
-    str = replaceAccents(str);
-    str = removeNonWord(str)
-        .replace(/-/g, ' ') //convert all hyphens to spaces
-        .replace(/\s[a-z]/g, upperCase) //convert first char of each word to UPPERCASE
-        .replace(/\s+/g, '') //remove spaces
-        .replace(/^[A-Z]/g, lowerCase); //convert first char to lowercase
-    return str;
+  str = replaceAccents(str);
+  str = removeNonWord(str)
+    .replace(/-/g, " ") //convert all hyphens to spaces
+    .replace(/\s[a-z]/g, upperCase) //convert first char of each word to UPPERCASE
+    .replace(/\s+/g, "") //remove spaces
+    .replace(/^[A-Z]/g, lowerCase); //convert first char to lowercase
+  return str;
 }
 
 /**
  * Add space between camelCase text.
  */
 export function unCamelCase(str) {
-    str = str.replace(/([a-z\xE0-\xFF])([A-Z\xC0\xDF])/g, '$1 $2');
-    str = str.toLowerCase(); //add space between camelCase text
-    return str;
+  str = str.replace(/([a-z\xE0-\xFF])([A-Z\xC0\xDF])/g, "$1 $2");
+  str = str.toLowerCase(); //add space between camelCase text
+  return str;
 }
 
 /**
  * UPPERCASE first char of each word.
  */
 export function properCase(str) {
-    return lowerCase(str).replace(/^\w|\s\w/g, upperCase);
+  return lowerCase(str).replace(/^\w|\s\w/g, upperCase);
 }
 
 /**
  * camelCase + UPPERCASE first char
  */
 export function pascalCase(str) {
-    return camelCase(str).replace(/^[a-z]/, upperCase);
+  return camelCase(str).replace(/^[a-z]/, upperCase);
 }
 
 /**
@@ -58,21 +58,21 @@ export function pascalCase(str) {
  */
 
 export function normalizeLineBreaks(str, lineEnd) {
-    lineEnd = lineEnd || 'n';
+  lineEnd = lineEnd || "n";
 
-    return str
-        .replace(/rn/g, lineEnd) // DOS
-        .replace(/r/g, lineEnd)   // Mac
-        .replace(/n/g, lineEnd);  // Unix
+  return str
+    .replace(/rn/g, lineEnd) // DOS
+    .replace(/r/g, lineEnd) // Mac
+    .replace(/n/g, lineEnd); // Unix
 }
 
 /**
-* UPPERCASE first char of each sentence and lowercase other chars.
-*/
+ * UPPERCASE first char of each sentence and lowercase other chars.
+ */
 export function sentenceCase(str) {
-    // Replace first char of each sentence (new line or after '.\s+') to
-    // UPPERCASE
-    return lowerCase(str).replace(/(^\w)|\.\s+(\w)/gm, upperCase);
+  // Replace first char of each sentence (new line or after '.\s+') to
+  // UPPERCASE
+  return lowerCase(str).replace(/(^\w)|\.\s+(\w)/gm, upperCase);
 }
 
 /**
@@ -81,32 +81,32 @@ export function sentenceCase(str) {
  * Does not split camelCase text.
  */
 export function slugify(str, delimeter) {
-    if (delimeter == null) {
-        delimeter = "-";
-    }
+  if (delimeter == null) {
+    delimeter = "-";
+  }
 
-    str = replaceAccents(str);
-    str = removeNonWord(str);
-    str = trim(str) //should come after removeNonWord
-        .replace(/ +/g, delimeter) //replace spaces with delimeter
-        .toLowerCase();
+  str = replaceAccents(str);
+  str = removeNonWord(str);
+  str = trim(str) //should come after removeNonWord
+    .replace(/ +/g, delimeter) //replace spaces with delimeter
+    .toLowerCase();
 
-    return str;
+  return str;
 }
 
 /**
  * Replaces spaces with hyphens, split camelCase text, remove non-word chars, remove accents and convert to lower case.
  */
 export function hyphenate(str) {
-    str = unCamelCase(str);
-    return slugify(str, "-");
+  str = unCamelCase(str);
+  return slugify(str, "-");
 }
 
 /**
  * Replaces hyphens with spaces. (only hyphens between word chars)
  */
 export function unhyphenate(str) {
-    return str.replace(/(\w)(-)(\w)/g, '$1 $3');
+  return str.replace(/(\w)(-)(\w)/g, "$1 $3");
 }
 
 /**
@@ -114,264 +114,298 @@ export function unhyphenate(str) {
  * non-word chars, remove accents and convert to lower case.
  */
 export function underscore(str) {
-    str = unCamelCase(str);
-    return slugify(str, "_");
+  str = unCamelCase(str);
+  return slugify(str, "_");
+}
+
+export const varToString = varObj => Object.keys(varObj)[0];
+
+/**
+ * Replaces underscores with spaces split camelCase text, remove
+ * non-word chars, remove accents and convert to lower case.
+ */
+export function deUnderscore(str) {
+  str = unCamelCase(str);
+  str = str.replace("_", " ");
+  return slugify(str, " ");
 }
 
 /**
  * Remove non-word chars.
  */
 export function removeNonWord(str) {
-    return str.replace(/[^0-9a-zA-Z\xC0-\xFF -]/g, '');
+  return str.replace(/[^0-9a-zA-Z\xC0-\xFF -]/g, "");
 }
 
 /**
- * 
+ *
  * Adds a space to a number that follows a character
  */
 export function splitNumbers(str) {
-    return str.replace(/([a-zA-Z])(\d)/g, '$1 $2');
+  return str.replace(/([a-zA-Z])(\d)/g, "$1 $2");
 }
 
 /**
-* Replaces all accented chars with regular ones
-*/
+ * Replaces all accented chars with regular ones
+ */
 export function replaceAccents(str) {
-    // verifies if the String has accents and replace them
-    if (str.search(/[\xC0-\xFF]/g) > -1) {
-        str = str
-            .replace(/[\xC0-\xC5]/g, "A")
-            .replace(/[\xC6]/g, "AE")
-            .replace(/[\xC7]/g, "C")
-            .replace(/[\xC8-\xCB]/g, "E")
-            .replace(/[\xCC-\xCF]/g, "I")
-            .replace(/[\xD0]/g, "D")
-            .replace(/[\xD1]/g, "N")
-            .replace(/[\xD2-\xD6\xD8]/g, "O")
-            .replace(/[\xD9-\xDC]/g, "U")
-            .replace(/[\xDD]/g, "Y")
-            .replace(/[\xDE]/g, "P")
-            .replace(/[\xE0-\xE5]/g, "a")
-            .replace(/[\xE6]/g, "ae")
-            .replace(/[\xE7]/g, "c")
-            .replace(/[\xE8-\xEB]/g, "e")
-            .replace(/[\xEC-\xEF]/g, "i")
-            .replace(/[\xF1]/g, "n")
-            .replace(/[\xF2-\xF6\xF8]/g, "o")
-            .replace(/[\xF9-\xFC]/g, "u")
-            .replace(/[\xFE]/g, "p")
-            .replace(/[\xFD\xFF]/g, "y");
-    }
+  // verifies if the String has accents and replace them
+  if (str.search(/[\xC0-\xFF]/g) > -1) {
+    str = str
+      .replace(/[\xC0-\xC5]/g, "A")
+      .replace(/[\xC6]/g, "AE")
+      .replace(/[\xC7]/g, "C")
+      .replace(/[\xC8-\xCB]/g, "E")
+      .replace(/[\xCC-\xCF]/g, "I")
+      .replace(/[\xD0]/g, "D")
+      .replace(/[\xD1]/g, "N")
+      .replace(/[\xD2-\xD6\xD8]/g, "O")
+      .replace(/[\xD9-\xDC]/g, "U")
+      .replace(/[\xDD]/g, "Y")
+      .replace(/[\xDE]/g, "P")
+      .replace(/[\xE0-\xE5]/g, "a")
+      .replace(/[\xE6]/g, "ae")
+      .replace(/[\xE7]/g, "c")
+      .replace(/[\xE8-\xEB]/g, "e")
+      .replace(/[\xEC-\xEF]/g, "i")
+      .replace(/[\xF1]/g, "n")
+      .replace(/[\xF2-\xF6\xF8]/g, "o")
+      .replace(/[\xF9-\xFC]/g, "u")
+      .replace(/[\xFE]/g, "p")
+      .replace(/[\xFD\xFF]/g, "y");
+  }
 
-    return str;
+  return str;
 }
 
 /**
  * Searches for a given substring
  */
 export function contains(str, substring, fromIndex) {
-    return str.indexOf(substring, fromIndex) !== -1;
+  return str.indexOf(substring, fromIndex) !== -1;
 }
 
 /**
  * Truncate string at full words.
  */
 export function crop(str, maxChars, append) {
-    return truncate(str, maxChars, append, true);
+  return truncate(str, maxChars, append, true);
 }
 
 /**
  * Escape RegExp string chars.
  */
 export function escapeRegExp(str) {
-    // eslint-disable-next-line no-useless-escape
-    var ESCAPE_CHARS = /[\\.+*?\^$\[\](){}\/'#]/g;
-    return str.replace(ESCAPE_CHARS, '\\$&');
+  // eslint-disable-next-line no-useless-escape
+  var ESCAPE_CHARS = /[\\.+*?\^$\[\](){}\/'#]/g;
+  return str.replace(ESCAPE_CHARS, "\\$&");
 }
 
 /**
  * Escapes a string for insertion into HTML.
  */
 export function escapeHtml(str) {
-    str = str
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/'/g, '&#39;')
-        .replace(/"/g, '&quot;');
+  str = str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/'/g, "&#39;")
+    .replace(/"/g, "&quot;");
 
-    return str;
+  return str;
 }
 
 /**
  * Unescapes HTML special chars
  */
 export function unescapeHtml(str) {
-    str = str
-        .replace(/&amp;/g, '&')
-        .replace(/&lt;/g, '<')
-        .replace(/&gt;/g, '>')
-        .replace(/&#39;/g, "'")
-        .replace(/&quot;/g, '"');
-    return str;
+  str = str
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&#39;/g, "'")
+    .replace(/&quot;/g, '"');
+  return str;
 }
 
 /**
-* Escape string into unicode sequences
-*/
+ * Escape string into unicode sequences
+ */
 export function escapeUnicode(str, shouldEscapePrintable) {
-    return str.replace(/[\s\S]/g, function (ch) {
-        // skip printable ASCII chars if we should not escape them
-        if (!shouldEscapePrintable && (/[\x20-\x7E]/).test(ch)) {
-            return ch;
-        }
-        // we use "000" and slice(-4) for brevity, need to pad zeros,
-        // unicode escape always have 4 chars after "\u"
-        return '\\u' + ('000' + ch.charCodeAt(0).toString(16)).slice(-4);
-    });
+  return str.replace(/[\s\S]/g, function(ch) {
+    // skip printable ASCII chars if we should not escape them
+    if (!shouldEscapePrintable && /[\x20-\x7E]/.test(ch)) {
+      return ch;
+    }
+    // we use "000" and slice(-4) for brevity, need to pad zeros,
+    // unicode escape always have 4 chars after "\u"
+    return "\\u" + ("000" + ch.charCodeAt(0).toString(16)).slice(-4);
+  });
 }
 
 /**
  * Remove HTML tags from string.
  */
 export function stripHtmlTags(str) {
-    return str.replace(/<[^>]*>/g, '');
+  return str.replace(/<[^>]*>/g, "");
 }
 
 /**
  * Remove non-printable ASCII chars
  */
 export function removeNonASCII(str) {
-    // Matches non-printable ASCII chars -
-    // http://en.wikipedia.org/wiki/ASCII#ASCII_printable_characters
-    return str.replace(/[^\x20-\x7E]/g, '');
+  // Matches non-printable ASCII chars -
+  // http://en.wikipedia.org/wiki/ASCII#ASCII_printable_characters
+  return str.replace(/[^\x20-\x7E]/g, "");
 }
 
 /**
  * String interpolation
  */
 export function interpolate(template, replacements, syntax) {
-    var stache = /\{\{(\w+)\}\}/g; //mustache-like
+  var stache = /\{\{(\w+)\}\}/g; //mustache-like
 
-    var replaceFn = function (match, prop) {
-        return (prop in replacements) ? replacements[prop] : '';
-    };
+  var replaceFn = function(match, prop) {
+    return prop in replacements ? replacements[prop] : "";
+  };
 
-    return template.replace(syntax || stache, replaceFn);
+  return template.replace(syntax || stache, replaceFn);
 }
 
 /**
  * Pad string with `char` if its' length is smaller than `minLen`
  */
 export function rpad(str, minLen, ch) {
-    ch = ch || ' ';
-    return (str.length < minLen) ? str + repeat(ch, minLen - str.length) : str;
+  ch = ch || " ";
+  return str.length < minLen ? str + repeat(ch, minLen - str.length) : str;
 }
 
 /**
  * Pad string with `char` if its' length is smaller than `minLen`
  */
 export function lpad(str, minLen, ch) {
-    ch = ch || ' ';
+  ch = ch || " ";
 
-    return ((str.length < minLen)
-        ? repeat(ch, minLen - str.length) + str : str);
+  return str.length < minLen ? repeat(ch, minLen - str.length) + str : str;
 }
 
 /**
-* Repeat string n times
-*/
+ * Repeat string n times
+ */
 export function repeat(str, n) {
-    return (new Array(n + 1)).join(str);
+  return new Array(n + 1).join(str);
 }
 
 /**
-* Limit number of chars.
-*/
+ * Limit number of chars.
+ */
 export function truncate(str, maxChars, append, onlyFullWords) {
-    append = append || '...';
-    maxChars = onlyFullWords ? maxChars + 1 : maxChars;
+  append = append || "...";
+  maxChars = onlyFullWords ? maxChars + 1 : maxChars;
 
-    str = trim(str);
-    if (str.length <= maxChars) {
-        return str;
-    }
-    str = str.substr(0, maxChars - append.length);
-    //crop at last space or remove trailing whitespace
-    str = onlyFullWords ? str.substr(0, str.lastIndexOf(' ')) : trim(str);
-    return str + append;
+  str = trim(str);
+  if (str.length <= maxChars) {
+    return str;
+  }
+  str = str.substr(0, maxChars - append.length);
+  //crop at last space or remove trailing whitespace
+  str = onlyFullWords ? str.substr(0, str.lastIndexOf(" ")) : trim(str);
+  return str + append;
 }
 
 export var WHITE_SPACES = [
-    ' ', '\n', '\r', '\t', '\f', '\v', '\u00A0', '\u1680', '\u180E',
-    '\u2000', '\u2001', '\u2002', '\u2003', '\u2004', '\u2005', '\u2006',
-    '\u2007', '\u2008', '\u2009', '\u200A', '\u2028', '\u2029', '\u202F',
-    '\u205F', '\u3000'
+  " ",
+  "\n",
+  "\r",
+  "\t",
+  "\f",
+  "\v",
+  "\u00A0",
+  "\u1680",
+  "\u180E",
+  "\u2000",
+  "\u2001",
+  "\u2002",
+  "\u2003",
+  "\u2004",
+  "\u2005",
+  "\u2006",
+  "\u2007",
+  "\u2008",
+  "\u2009",
+  "\u200A",
+  "\u2028",
+  "\u2029",
+  "\u202F",
+  "\u205F",
+  "\u3000"
 ];
 
 /**
-* Remove chars from beginning of string.
-*/
+ * Remove chars from beginning of string.
+ */
 export function ltrim(str, chars) {
-    chars = chars || WHITE_SPACES;
+  chars = chars || WHITE_SPACES;
 
-    var start = 0,
-        len = str.length,
-        charLen = chars.length,
-        found = true,
-        i, c;
+  var start = 0,
+    len = str.length,
+    charLen = chars.length,
+    found = true,
+    i,
+    c;
 
-    while (found && start < len) {
-        found = false;
-        i = -1;
-        c = str.charAt(start);
+  while (found && start < len) {
+    found = false;
+    i = -1;
+    c = str.charAt(start);
 
-        while (++i < charLen) {
-            if (c === chars[i]) {
-                found = true;
-                start++;
-                break;
-            }
-        }
+    while (++i < charLen) {
+      if (c === chars[i]) {
+        found = true;
+        start++;
+        break;
+      }
     }
+  }
 
-    return (start >= len) ? '' : str.substr(start, len);
+  return start >= len ? "" : str.substr(start, len);
 }
 
 /**
-* Remove chars from end of string.
-*/
+ * Remove chars from end of string.
+ */
 export function rtrim(str, chars) {
-    chars = chars || WHITE_SPACES;
+  chars = chars || WHITE_SPACES;
 
-    var end = str.length - 1,
-        charLen = chars.length,
-        found = true,
-        i, c;
+  var end = str.length - 1,
+    charLen = chars.length,
+    found = true,
+    i,
+    c;
 
-    while (found && end >= 0) {
-        found = false;
-        i = -1;
-        c = str.charAt(end);
+  while (found && end >= 0) {
+    found = false;
+    i = -1;
+    c = str.charAt(end);
 
-        while (++i < charLen) {
-            if (c === chars[i]) {
-                found = true;
-                end--;
-                break;
-            }
-        }
+    while (++i < charLen) {
+      if (c === chars[i]) {
+        found = true;
+        end--;
+        break;
+      }
     }
+  }
 
-    return (end >= 0) ? str.substring(0, end + 1) : '';
+  return end >= 0 ? str.substring(0, end + 1) : "";
 }
 
 /**
  * Remove white-spaces from beginning and end of string.
  */
 export function trim(str, chars) {
-    chars = chars || WHITE_SPACES;
-    return ltrim(rtrim(str, chars), chars);
+  chars = chars || WHITE_SPACES;
+  return ltrim(rtrim(str, chars), chars);
 }
 
 /**
@@ -379,20 +413,22 @@ export function trim(str, chars) {
  * input is in all caps)
  */
 export function abbreviate(str) {
-    return str.match(/\b([A-Z])/g).join('');
+  return str.match(/\b([A-Z])/g).join("");
 }
 
 /** Counts number of word of a string */
 
 export function countWords(str) {
-    const regex = /\s+/gi;
-    const wordCount = str.trim().replace(regex, ' ').split(' ').length;
-    return wordCount;
+  const regex = /\s+/gi;
+  const wordCount = str
+    .trim()
+    .replace(regex, " ")
+    .split(" ").length;
+  return wordCount;
 }
 
 /** Converts HTML to   */
 
 export function TextHTMLtoText(html) {
-    return html.replace(/<(?:.|\n)*?>/gm, '');
+  return html.replace(/<(?:.|\n)*?>/gm, "");
 }
-

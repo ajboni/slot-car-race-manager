@@ -1,13 +1,17 @@
-import React from "react";
-import * as c from "../../constants/constants";
+import React, { useState } from "react";
 import { observer } from "mobx-react";
 import Button from "@material-ui/core/Button";
 import DataTable from "../dataTable";
+import Racer_edit_screen from "./racer_edit";
+import racers_store from "../../stores/racers_store";
+import l from "../../constants/lang";
 
 const Racers = observer(() => {
+  const [selectedRacer, setselectedRacer] = useState(null);
+
   let sampleColumns = [
-    { title: c.get(c.name), field: "name" },
-    { title: c.get(c.wins), field: "wins" }
+    { title: l.NAME, field: "name" },
+    { title: l.WINS, field: "wins" }
   ];
 
   let sampleData = [
@@ -20,32 +24,34 @@ const Racers = observer(() => {
   let actions = [
     {
       icon: "edit",
-      tooltip: "Save User",
-      onClick: (event, rowData) => alert("You saved " + rowData.name)
+      tooltip: l.EDIT_RACER,
+      onClick: (event, rowData) => {
+        // alert("You saved " + rowData.name);
+        setselectedRacer(rowData);
+        racers_store.openModal(true);
+      }
     },
     {
       icon: "delete",
-      tooltip: "Delete User",
+      tooltip: l.DELETE_RACER,
       onClick: (event, rowData) => confirm("You want to delete " + rowData.name)
-    },
-    {
-      icon: "add",
-      tooltip: "Delete User",
-      onClick: (event, rowData) =>
-        confirm("You want to delete " + rowData.name),
-      isFreeAction: true
     }
   ];
+
   return (
     <div>
+      <Racer_edit_screen
+        open={racers_store.editRacerModalOpen}
+        racer={selectedRacer}
+      />
       <DataTable
         data={sampleData}
         columns={sampleColumns}
-        title={c.get(c.racers)}
+        title={l.RACERS}
         actions={actions}
       />
       <Button variant="contained" color="secondary">
-        {c.get(c.newUser)}
+        {l.NEW_RACER}
       </Button>
     </div>
   );

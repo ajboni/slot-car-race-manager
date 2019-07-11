@@ -14,6 +14,7 @@ class Store {
   @action setLanguage(lang) {
     l.setLanguage(lang);
     this.language = c.languages[lang];
+    window.location.reload();
   }
 }
 

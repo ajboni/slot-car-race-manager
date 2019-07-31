@@ -8,13 +8,11 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import { routes } from "../constants/routes";
 import { languages } from "../constants/constants";
-import Flag from "react-world-flags";
 
 import { Button, ButtonGroup, Icon } from "@material-ui/core";
 import ToggleButton from "@material-ui/lab/ToggleButton";
 import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
 import logo from "../img/car.png";
-import store from "../store";
 import { observer } from "mobx-react";
 import { Route, Link, BrowserRouter as Router } from "react-router-dom";
 import l from "../constants/lang";
@@ -47,7 +45,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const langs = Object.keys(languages);
-// console.log(langs);
 
 const Sidebar = observer(() => {
   const classes = useStyles();
@@ -60,10 +57,11 @@ const Sidebar = observer(() => {
       }}
       anchor="left"
     >
-      <img src={logo} style={{ width: "100%", height: "100" }} />
-      {/* <div className={classes.toolbar}>
-      </div> */}
+      {/* LOGO */}
+      {/* <img src={logo} style={{ width: "100%", height: "100" }} /> */}
+
       <Divider />
+
       <List>
         {routes.map(route => (
           <Link
@@ -75,29 +73,12 @@ const Sidebar = observer(() => {
               <ListItemIcon>
                 <Icon>{route.icon}</Icon>
               </ListItemIcon>
-              <ListItemText primary={route.label} />
+              <ListItemText primary={l[route.label]} />
             </ListItem>
           </Link>
         ))}
       </List>
       <Divider />
-      <ToggleButtonGroup
-        size="small"
-        style={{ alignSelf: "center", marginTop: "20px" }}
-        exclusive
-        value={store.language.id}
-      >
-        {langs.map(key => (
-          <ToggleButton
-            value={languages[key].id}
-            key={languages[key].id}
-            onClick={e => store.setLanguage(e.currentTarget.value)}
-          >
-            <Flag code={languages[key].flag} className={classes.leftIcon} />
-            {languages[key].label}
-          </ToggleButton>
-        ))}
-      </ToggleButtonGroup>
     </Drawer>
   );
 });

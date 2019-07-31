@@ -19,3 +19,7 @@ export const languages = {
     pos: "right"
   }
 };
+
+export const settings = {
+  LANGUAGE: "language"
+};

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Layout from "./components/layout";
 import {
   BrowserRouter as Router,
@@ -21,6 +21,8 @@ const theme = createMuiTheme({
     }
   }
 });
+
+Store.init();
 
 function App() {
   return (

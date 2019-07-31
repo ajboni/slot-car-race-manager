@@ -13,35 +13,35 @@ import l from "./lang";
 export const routes = [
   {
     target: "/",
-    label: l.HOME,
+    label: "HOME",
     icon: "home",
     component: Home,
     exact: true
   },
   {
     target: "/race",
-    label: l.RACE,
+    label: "RACE",
     icon: "directions_car",
     component: Race,
     exact: false
   },
   {
     target: "/racers",
-    label: l.RACERS,
+    label: "RACERS",
     icon: "group",
     component: Racers,
     exact: false
   },
   {
     target: "/ruleset",
-    label: l.RULESET,
+    label: "RULESET",
     icon: "library_books",
     component: Rules,
     exact: false
   },
   {
     target: "/stats",
-    label: l.STATS,
+    label: "STATS",
     icon: "dashboard",
     component: Stats,
 
@@ -49,7 +49,7 @@ export const routes = [
   },
   {
     target: "/settings",
-    label: l.SETTINGS,
+    label: "SETTINGS",
     icon: "settings",
     component: Settings,
     exact: false

@@ -20,7 +20,8 @@ let l = new LocalizedStrings({
     WINS: "Wins",
     NAME: "Name",
     EMPTY_DATASOURCE_MESSAGE: "No records to display.",
-    LANGUAGE: "Language"
+    LANGUAGE: "Language",
+    LOADING: "Loading..."
   },
   spa: {
     ACTIONS: "Acciones",
@@ -40,7 +41,8 @@ let l = new LocalizedStrings({
     NAME: "Name",
     EMPTY_DATASOURCE_MESSAGE: "No hay datos para mostrar.",
     SETTINGS: "Preferencias",
-    LANGUAGE: "Idioma"
+    LANGUAGE: "Idioma",
+    LOADING: "Cargando..."
   }
 });
 

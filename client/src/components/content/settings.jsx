@@ -20,6 +20,14 @@ const useStyles = makeStyles(theme => ({
   toggleContainer: {
     margin: theme.spacing(2, 0)
   },
+  formItem: {
+    display: "flex",
+    alignItems: "flex-end"
+  },
+  label: {
+    marginRight: "20px",
+    fontWeight: "400"
+  },
   a: {
     textDecoration: "none"
   },
@@ -34,8 +42,8 @@ const Settings = observer(() => {
   return (
     <Fragment>
       <h1>{l.SETTINGS}</h1>
-      <span>
-        <div>{l.LANGUAGE}</div>
+      <div className={classes.formItem}>
+        <div className={classes.label}>{l.LANGUAGE}</div>
         <ToggleButtonGroup
           size="small"
           style={{ alignSelf: "center", marginTop: "20px" }}
@@ -53,7 +61,7 @@ const Settings = observer(() => {
             </ToggleButton>
           ))}
         </ToggleButtonGroup>
-      </span>
+      </div>
     </Fragment>
   );
 });

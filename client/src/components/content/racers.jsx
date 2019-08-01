@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, Fragment } from "react";
 import { observer } from "mobx-react";
 import Button from "@material-ui/core/Button";
 import DataTable from "../dataTable";
@@ -39,7 +39,7 @@ const Racers = observer(() => {
   ];
 
   return (
-    <div>
+    <Fragment>
       <Racer_edit_screen
         open={racers_store.editRacerModalOpen}
         racer={selectedRacer}
@@ -50,10 +50,11 @@ const Racers = observer(() => {
         title={l.RACERS}
         actions={actions}
       />
-      <Button variant="contained" color="secondary">
+      <br />
+      <Button variant="contained" size="large" color="secondary">
         {l.NEW_RACER}
       </Button>
-    </div>
+    </Fragment>
   );
 });
 

@@ -20,7 +20,6 @@ let l = new LocalizedStrings({
     WINS: "Wins",
     NAME: "Name",
     EMPTY_DATASOURCE_MESSAGE: "No records to display.",
-    SETTINGS: "Settings",
     LANGUAGE: "Language"
   },
   spa: {
@@ -29,18 +28,17 @@ let l = new LocalizedStrings({
     DELETE_RACER: "Eliminar Piloto",
     EDIT_RACER: "Editar Piloto",
     HOME: "Inicio",
-    NEW_RACE: "New Race",
-    NEW_RACER: "New Racer",
-    RACE: "Race",
+    NEW_RACE: "Nueva Carrera",
+    NEW_RACER: "Nuevo Piloto",
+    RACE: "Carrera",
     RACERS: "Pilotos",
-    RULESET: "Ruleset",
+    RULESET: "Reglas",
     SCRAM_TITLE: "Slot Car Race Manager",
-    SEARCH: "Search",
-    SETTINGS: "Settings",
-    STATS: "Stats",
+    SEARCH: "Buscar",
+    STATS: "Estadísticas",
     WINS: "Wins",
     NAME: "Name",
-    EMPTY_DATASOURCE_MESSAGE: "No records to display.",
+    EMPTY_DATASOURCE_MESSAGE: "No hay datos para mostrar.",
     SETTINGS: "Preferencias",
     LANGUAGE: "Idioma"
   }

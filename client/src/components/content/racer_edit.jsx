@@ -9,6 +9,39 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import racers_store from "../../stores/racers_store";
 import l from "../../constants/lang";
+import { Query } from "react-apollo";
+import gql from "graphql-tag";
+import { Mutation, ApolloConsumer } from "react-apollo";
+import { client } from "../../apollo";
+
+const EDIT_RACER = gql`
+  mutation {
+    update_racer(where: { id: { _eq: 1 } }, _set: { name: "pepe" }) {
+      returning {
+        id
+      }
+    }
+  }
+`;
+
+const GET_RACERS = gql`
+  query GetRacers {
+    racer {
+      id
+      name
+    }
+  }
+`;
+
+const submitEdit = racer => {
+  // console.log(racer);
+  // client
+  //   .mutate({
+  //     EDIT_RACER
+  //   })
+  //   .then(console.log);
+  client.query(GET_RACERS).then(console.log);
+};
 
 const Racer_edit_screen = ({ racer }) => {
   if (!racer) return null;
@@ -23,7 +56,7 @@ const Racer_edit_screen = ({ racer }) => {
       >
         <DialogTitle id="form-dialog-title">{l.EDIT_RACER}</DialogTitle>
         <DialogContent>
-          {/* <DialogContentText>
+          {/* <DialogContent Text> 
             To subscribe to this website, please enter your email address here.
             We will send updates occasionally.
           </DialogContentText> */}
@@ -40,7 +73,13 @@ const Racer_edit_screen = ({ racer }) => {
           <Button onClick={() => racers_store.openModal(false)} color="primary">
             {l.CANCEL}
           </Button>
-          <Button onClick={() => racers_store.openModal(false)} color="primary">
+          <Button
+            onClick={() => {
+              submitEdit(racer);
+              racers_store.openModal(false);
+            }}
+            color="primary"
+          >
             OK
           </Button>
         </DialogActions>

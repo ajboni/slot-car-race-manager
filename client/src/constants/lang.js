@@ -21,7 +21,8 @@ let l = new LocalizedStrings({
     NAME: "Name",
     EMPTY_DATASOURCE_MESSAGE: "No records to display.",
     LANGUAGE: "Language",
-    LOADING: "Loading..."
+    LOADING: "Loading...",
+    CONFIRM_DELETE: "Really delete "
   },
   spa: {
     ACTIONS: "Acciones",
@@ -38,11 +39,12 @@ let l = new LocalizedStrings({
     SEARCH: "Buscar",
     STATS: "Estadísticas",
     WINS: "Wins",
-    NAME: "Name",
+    NAME: "Nombre",
     EMPTY_DATASOURCE_MESSAGE: "No hay datos para mostrar.",
     SETTINGS: "Preferencias",
     LANGUAGE: "Idioma",
-    LOADING: "Cargando..."
+    LOADING: "Cargando...",
+    CONFIRM_DELETE: "Eliminar "
   }
 });
 

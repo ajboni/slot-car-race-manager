@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import * as c from "../../constants/constants";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
@@ -13,12 +13,14 @@ import { Query } from "react-apollo";
 import gql from "graphql-tag";
 import { Mutation, ApolloConsumer } from "react-apollo";
 import { client } from "../../apollo";
+import { useMutation } from "@apollo/react-hooks";
 
 const EDIT_RACER = gql`
-  mutation {
-    update_racer(where: { id: { _eq: 1 } }, _set: { name: "pepe" }) {
+  mutation update_racer($id: Int, $newName: String) {
+    update_racer(where: { id: { _eq: $id } }, _set: { name: $newName }) {
       returning {
         id
+        name
       }
     }
   }
@@ -33,18 +35,11 @@ const GET_RACERS = gql`
   }
 `;
 
-const submitEdit = racer => {
-  // console.log(racer);
-  // client
-  //   .mutate({
-  //     EDIT_RACER
-  //   })
-  //   .then(console.log);
-  client.query(GET_RACERS).then(console.log);
-};
-
 const Racer_edit_screen = ({ racer }) => {
   if (!racer) return null;
+  const [newName, setNewName] = useState(racer.name);
+  const [updateRacer, { data }] = useMutation(EDIT_RACER);
+
   return (
     <div>
       <Dialog
@@ -66,7 +61,22 @@ const Racer_edit_screen = ({ racer }) => {
             id="name"
             label={l.EDIT_RACER}
             fullWidth
-            defaultValue={racer.name}
+            value={newName}
+            onChange={e => setNewName(e.target.value)}
+            onFocus={event => {
+              event.target.select();
+            }}
+            onKeyPress={ev => {
+              if (ev.key === "Enter") {
+                // Do code here
+                updateRacer({
+                  variables: { id: racer.id, newName: newName }
+                });
+
+                racers_store.openModal(false);
+                ev.preventDefault();
+              }
+            }}
           />
         </DialogContent>
         <DialogActions>
@@ -75,7 +85,10 @@ const Racer_edit_screen = ({ racer }) => {
           </Button>
           <Button
             onClick={() => {
-              submitEdit(racer);
+              updateRacer({
+                variables: { id: racer.id, newName: newName }
+              });
+
               racers_store.openModal(false);
             }}
             color="primary"

@@ -12,6 +12,7 @@ import { ThemeProvider } from "@material-ui/styles";
 import Store from "./store";
 import { ApolloProvider } from "react-apollo";
 import { client } from "./apollo";
+import { ApolloProvider as ApolloHooksProvider } from "@apollo/react-hooks";
 
 const theme = createMuiTheme({
   palette: {
@@ -29,11 +30,13 @@ Store.init();
 function App() {
   return (
     <ApolloProvider client={client}>
-      <ThemeProvider theme={theme}>
-        <Router>
-          <Layout />
-        </Router>
-      </ThemeProvider>
+      <ApolloHooksProvider client={client}>
+        <ThemeProvider theme={theme}>
+          <Router>
+            <Layout />
+          </Router>
+        </ThemeProvider>
+      </ApolloHooksProvider>
     </ApolloProvider>
   );
 }

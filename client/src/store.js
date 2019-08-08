@@ -21,7 +21,7 @@ class Store {
 
   /** Gets an Item from local storage, returning an optional default value */
   @action getItem(item, defaultValue = "") {
-    const _item = localStorage.getItem(item);
+    let _item = localStorage.getItem(item);
     if (_item === null) {
       _item = defaultValue;
     }

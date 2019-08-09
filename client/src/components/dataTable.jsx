@@ -67,7 +67,7 @@ const DataTable = observer(({ data, columns, title, actions }) => {
       icons={tableIcons}
       actions={actions}
       localization={localization}
-      options={{ toolbarButtonAlignment: "left" }}
+      options={{ toolbarButtonAlignment: "left", pageSize: 10 }}
     />
   );
 });

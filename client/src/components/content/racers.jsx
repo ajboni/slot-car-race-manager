@@ -29,10 +29,25 @@ const DELETE_RACER = gql`
   }
 `;
 
+const CREATE_RACER = gql`
+  mutation create_racer($name: String) {
+    insert_racer(objects: { name: $name }) {
+      returning {
+        id
+        name
+      }
+    }
+  }
+`;
+
 const Racers = observer(() => {
   const [selectedRacer, setselectedRacer] = useState(null);
   const { loading, error, data } = useQuery(GET_RACERS);
   const [deleteRacer, { deletedRacer }] = useMutation(DELETE_RACER, {
+    refetchQueries: ["GetRacers"]
+  });
+
+  const [createRacer, { createdRacer }] = useMutation(CREATE_RACER, {
     refetchQueries: ["GetRacers"]
   });
 
@@ -84,7 +99,20 @@ const Racers = observer(() => {
       />
 
       <br />
-      <Button variant="contained" size="large" color="secondary">
+      <Button
+        variant="contained"
+        size="large"
+        color="secondary"
+        onClick={async () => {
+          // TODO: Find out why created racer is undefined...
+          const y = await createRacer({ variables: { name: l.NEW_RACER } });
+          const racer = y.data.insert_racer.returning[0];
+          if (racer) {
+            setselectedRacer(racer);
+            racers_store.openModal(true);
+          }
+        }}
+      >
         {l.NEW_RACER}
       </Button>
     </Fragment>

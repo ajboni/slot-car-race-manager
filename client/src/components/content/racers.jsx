@@ -8,6 +8,10 @@ import l from "../../constants/lang";
 import { Query, graphql } from "react-apollo";
 import gql from "graphql-tag";
 import { useQuery, useMutation } from "@apollo/react-hooks";
+import store from "../../store";
+import { getAction } from "../dataTable";
+import EditItemScreen from "./edit_item";
+import { TextField } from "@material-ui/core";
 
 const GET_RACERS = gql`
   query GetRacers {
@@ -63,41 +67,69 @@ const Racers = observer(() => {
     // { title: l.WINS, field: "wins" }
   ];
 
-  let actions = [
-    {
-      icon: "edit",
-      tooltip: l.EDIT_RACER,
-      onClick: (event, rowData) => {
-        // alert("You saved " + rowData.name);
-        setselectedRacer(rowData);
-        racers_store.openModal(true);
-      }
-    },
-    {
-      icon: "delete",
-      tooltip: l.DELETE_RACER,
-      onClick: (event, racer) => {
-        const confirmDeletion = confirm(l.CONFIRM_DELETE + racer.name + " ?");
+  const collection = "RACER";
 
-        if (confirmDeletion) {
-          deleteRacer({ variables: { id: racer.id } });
-        }
-      }
-    }
-  ];
   return (
     <Fragment>
-      <Racer_edit_screen
-        open={racers_store.editRacerModalOpen}
-        racer={selectedRacer}
+      <EditItemScreen
+        open={store.appState[collection].showEditItemModal}
+        item={store.appState[collection].selectedItem}
+        collection={collection}
+        content={
+          <TextField
+            autoFocus
+            margin="dense"
+            id="name"
+            label={l["EDIT_" + collection]}
+            fullWidth
+            value={newName}
+            onChange={e => setNewName(e.target.value)}
+            onFocus={event => {
+              event.target.select();
+            }}
+            onKeyPress={ev => {
+              if (ev.key === "Enter") {
+                // Do code here
+                updateRacer({
+                  variables: { id: racer.id, newName: newName }
+                });
+
+                store.setOpenModal(collection, false);
+                ev.preventDefault();
+              }
+            }}
+          />
+        }
+        actions={
+          <Fragment>
+            <Button
+              onClick={() => racers_store.openModal(false)}
+              color="primary"
+            >
+              {l.CANCEL}
+            </Button>
+            <Button
+              onClick={() => {
+                updateRacer({
+                  variables: { id: racer.id, newName: newName }
+                });
+
+                racers_store.openModal(false);
+              }}
+              color="primary"
+            >
+              OK
+            </Button>
+          </Fragment>
+        }
       />
       <DataTable
         data={data.racer}
         columns={sampleColumns}
         title={l.RACERS}
-        actions={actions}
+        actions={getAction(collection)}
       />
-
+      openModal
       <br />
       <Button
         variant="contained"
@@ -108,8 +140,10 @@ const Racers = observer(() => {
           const y = await createRacer({ variables: { name: l.NEW_RACER } });
           const racer = y.data.insert_racer.returning[0];
           if (racer) {
-            setselectedRacer(racer);
-            racers_store.openModal(true);
+            store.setSelectedItem(collection, racer);
+            store.setOpenModal(collection, true);
+            // setselectedRacer(racer);
+            // racers_store.openModal(true);
           }
         }}
       >

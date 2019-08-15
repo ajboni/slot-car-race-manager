@@ -20,6 +20,7 @@ import Search from "@material-ui/icons/Search";
 import ViewColumn from "@material-ui/icons/ViewColumn";
 import { forwardRef } from "react";
 import l from "../constants/lang";
+import store from "../store";
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -73,3 +74,32 @@ const DataTable = observer(({ data, columns, title, actions }) => {
 });
 
 export default DataTable;
+
+export function getAction(collection) {
+  return [
+    {
+      icon: "edit",
+      tooltip: l["EDIT_" + collection],
+      onClick: (event, rowData) => {
+        store.setSelectedItem(collection, rowData);
+        store.setOpenModal(collection, true);
+        // racers_store.openModal(true);
+        console.log(collection);
+      }
+    },
+    {
+      icon: "delete",
+      tooltip: l["DELETE_" + collection],
+      onClick: (event, item) => {
+        let name = item.name ? item.name : item.id;
+        const confirmDeletion = confirm(
+          l.CONFIRM_DELETE + " " + l[collection] + " " + item.name + " ?"
+        );
+
+        if (confirmDeletion) {
+          store.deleteItem({ variables: { id: item.id } });
+        }
+      }
+    }
+  ];
+}

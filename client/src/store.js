@@ -18,6 +18,16 @@ class Store {
 
   @observable finished = false;
   @observable language = c.languages.spa;
+  @observable appState = {
+    RACER: {
+      selectedItem: null,
+      showEditItemModal: false
+    },
+    RULESET: {
+      showEditItemModal: false,
+      selectedItem: null
+    }
+  };
 
   /** Gets an Item from local storage, returning an optional default value */
   @action getItem(item, defaultValue = "") {
@@ -36,6 +46,13 @@ class Store {
     if (forceReload) {
       window.location.reload();
     }
+  }
+
+  @action setSelectedItem(collection, item) {
+    this.appState[collection].selectedItem = item;
+  }
+  @action setOpenModal(collection, value) {
+    this.appState[collection].showEditItemModal = value;
   }
 }
 

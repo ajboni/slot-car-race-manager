@@ -27,16 +27,7 @@ const EDIT_RACER = gql`
   }
 `;
 
-const GET_RACERS = gql`
-  query GetRacers {
-    racer {
-      id
-      name
-    }
-  }
-`;
-
-const Racer_edit_screen = ({ item }) => {
+const Ruleset_edit_screen = ({ item }) => {
   if (!item) return null;
   const [newName, setNewName] = useState(item.name);
   const [updateRacer, { data }] = useMutation(EDIT_RACER);
@@ -108,4 +99,4 @@ const Racer_edit_screen = ({ item }) => {
   );
 };
 
-export default Racer_edit_screen;
+export default Ruleset_edit_screen;

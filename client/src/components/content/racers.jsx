@@ -10,7 +10,6 @@ import gql from "graphql-tag";
 import { useQuery, useMutation } from "@apollo/react-hooks";
 import store from "../../store";
 import { getAction } from "../dataTable";
-import EditItemScreen from "./edit_item";
 import { TextField } from "@material-ui/core";
 
 const GET_RACERS = gql`
@@ -71,57 +70,10 @@ const Racers = observer(() => {
 
   return (
     <Fragment>
-      <EditItemScreen
+      <Racer_edit_screen
         open={store.appState[collection].showEditItemModal}
         item={store.appState[collection].selectedItem}
         collection={collection}
-        content={
-          <TextField
-            autoFocus
-            margin="dense"
-            id="name"
-            label={l["EDIT_" + collection]}
-            fullWidth
-            value={newName}
-            onChange={e => setNewName(e.target.value)}
-            onFocus={event => {
-              event.target.select();
-            }}
-            onKeyPress={ev => {
-              if (ev.key === "Enter") {
-                // Do code here
-                updateRacer({
-                  variables: { id: racer.id, newName: newName }
-                });
-
-                store.setOpenModal(collection, false);
-                ev.preventDefault();
-              }
-            }}
-          />
-        }
-        actions={
-          <Fragment>
-            <Button
-              onClick={() => racers_store.openModal(false)}
-              color="primary"
-            >
-              {l.CANCEL}
-            </Button>
-            <Button
-              onClick={() => {
-                updateRacer({
-                  variables: { id: racer.id, newName: newName }
-                });
-
-                racers_store.openModal(false);
-              }}
-              color="primary"
-            >
-              OK
-            </Button>
-          </Fragment>
-        }
       />
       <DataTable
         data={data.racer}
@@ -129,7 +81,6 @@ const Racers = observer(() => {
         title={l.RACERS}
         actions={getAction(collection)}
       />
-      openModal
       <br />
       <Button
         variant="contained"

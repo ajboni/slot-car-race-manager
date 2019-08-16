@@ -75,7 +75,7 @@ const DataTable = observer(({ data, columns, title, actions }) => {
 
 export default DataTable;
 
-export function getAction(collection) {
+export function getAction(collection, deleteCallback) {
   return [
     {
       icon: "edit",
@@ -97,7 +97,8 @@ export function getAction(collection) {
         );
 
         if (confirmDeletion) {
-          store.deleteItem({ variables: { id: item.id } });
+          // store.deleteItem({ variables: { id: item.id } });
+          deleteCallback({ variables: { id: item.id } });
         }
       }
     }

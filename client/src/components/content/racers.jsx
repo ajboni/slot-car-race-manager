@@ -44,13 +44,13 @@ const CREATE_RACER = gql`
 `;
 
 const Racers = observer(() => {
-  const [selectedRacer, setselectedRacer] = useState(null);
   const { loading, error, data } = useQuery(GET_RACERS);
-  const [deleteRacer, { deletedRacer }] = useMutation(DELETE_RACER, {
+
+  const [createRacer, { createdRacer }] = useMutation(CREATE_RACER, {
     refetchQueries: ["GetRacers"]
   });
 
-  const [createRacer, { createdRacer }] = useMutation(CREATE_RACER, {
+  const [deleteRacer, {}] = useMutation(DELETE_RACER, {
     refetchQueries: ["GetRacers"]
   });
 
@@ -62,6 +62,7 @@ const Racers = observer(() => {
   }
 
   let sampleColumns = [
+    { title: "ID", field: "id" },
     { title: l.NAME, field: "name" }
     // { title: l.WINS, field: "wins" }
   ];
@@ -79,7 +80,7 @@ const Racers = observer(() => {
         data={data.racer}
         columns={sampleColumns}
         title={l.RACERS}
-        actions={getAction(collection)}
+        actions={getAction(collection, deleteRacer)}
       />
       <br />
       <Button
@@ -91,8 +92,8 @@ const Racers = observer(() => {
           const y = await createRacer({ variables: { name: l.NEW_RACER } });
           const racer = y.data.insert_racer.returning[0];
           if (racer) {
-            store.setSelectedItem(collection, racer);
-            store.setOpenModal(collection, true);
+            // store.setSelectedItem(collection, racer);
+            // store.setOpenModal(collection, true);
             // setselectedRacer(racer);
             // racers_store.openModal(true);
           }

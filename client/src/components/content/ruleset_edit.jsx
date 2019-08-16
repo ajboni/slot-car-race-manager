@@ -15,10 +15,36 @@ import { Mutation, ApolloConsumer } from "react-apollo";
 import { client } from "../../apollo";
 import { useMutation } from "@apollo/react-hooks";
 import store from "../../store";
+import { makeStyles } from "@material-ui/styles";
 
-const EDIT_RACER = gql`
-  mutation update_racer($id: Int, $newName: String) {
-    update_racer(where: { id: { _eq: $id } }, _set: { name: $newName }) {
+const EDIT_RULESET = gql`
+  mutation update_ruleset(
+    $id: Int
+    $newName: String
+    $total_laps: Int
+    $total_racers: Int
+  ) {
+    update_ruleset(
+      where: { id: { _eq: $id } }
+      _set: {
+        name: $newName
+        total_laps: $total_laps
+        total_racers: $total_racers
+      }
+    ) {
+      returning {
+        id
+        name
+        total_laps
+        total_racers
+      }
+    }
+  }
+`;
+
+const DELETE_RULESET = gql`
+  mutation delete_ruleset($id: Int) {
+    delete_ruleset(where: { id: { _eq: $id } }) {
       returning {
         id
         name
@@ -27,12 +53,34 @@ const EDIT_RACER = gql`
   }
 `;
 
-const Ruleset_edit_screen = ({ item }) => {
-  if (!item) return null;
-  const [newName, setNewName] = useState(item.name);
-  const [updateRacer, { data }] = useMutation(EDIT_RACER);
+const useStyles = makeStyles(theme => ({
+  textField: {
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1),
+    width: 400,
+    marginTop: theme.spacing(2)
+  },
+  dense: {
+    marginTop: 19
+  },
+  menu: {
+    width: 200
+  }
+}));
 
-  const collection = "RACER";
+const Ruleset_edit_screen = ({ item, mode }) => {
+  if (!item) return null;
+  const classes = useStyles();
+  const [newName, setNewName] = useState(item.name);
+  const [laps, setLaps] = useState(item.total_laps);
+  const [racers, setRacers] = useState(item.total_racers);
+
+  const [updateRuleset, { data }] = useMutation(EDIT_RULESET);
+  const [deleteRuleset, {}] = useMutation(DELETE_RULESET, {
+    refetchQueries: ["GetRules"]
+  });
+
+  const collection = "RULESET";
   return (
     <div>
       <Dialog
@@ -42,49 +90,65 @@ const Ruleset_edit_screen = ({ item }) => {
         fullWidth
         maxWidth="md"
       >
-        <DialogTitle id="form-dialog-title">{l.EDIT_RACER}</DialogTitle>
+        <DialogTitle id="form-dialog-title">{l.EDIT_RULESET}</DialogTitle>
         <DialogContent>
           {/* <DialogContent Text> 
             To subscribe to this website, please enter your email address here.
             We will send updates occasionally.
           </DialogContentText> */}
           <TextField
-            autoFocus
-            margin="dense"
-            id="name"
-            label={l.EDIT_RACER}
             fullWidth
+            autoFocus
+            label={l.NAME}
             value={newName}
             onChange={e => setNewName(e.target.value)}
-            onFocus={event => {
-              event.target.select();
-
-              // racers_store.openModal(false);
-            }}
-            onKeyPress={ev => {
-              if (ev.key === "Enter") {
-                // Do code here
-                updateRacer({
-                  variables: { id: item.id, newName: newName }
-                });
-
-                store.setOpenModal(collection, false);
-                ev.preventDefault();
+            className={classes.textField}
+          />
+          <TextField
+            label={l.TOTAL_LAPS}
+            value={laps}
+            onChange={e => {
+              let clean = e.target.value.replace(/\D/g, "");
+              if (clean === "") {
+                clean = 1;
               }
+              setLaps(clean);
             }}
+            type="number"
+            className={classes.textField}
+          />
+          <TextField
+            label={l.TOTAL_RACERS}
+            value={racers}
+            onChange={e => {
+              let clean = e.target.value.replace(/\D/g, "");
+              if (clean === "") {
+                clean = 1;
+              }
+              setRacers(clean);
+            }}
+            type="number"
+            className={classes.textField}
           />
         </DialogContent>
         <DialogActions>
           <Button
-            onClick={() => store.setOpenModal(collection, false)}
+            onClick={() => {
+              store.setOpenModal(collection, false);
+            }}
             color="primary"
           >
             {l.CANCEL}
           </Button>
           <Button
             onClick={() => {
-              updateRacer({
-                variables: { id: item.id, newName: newName }
+              updateRuleset({
+                variables: {
+                  id: item.id,
+                  newName: newName,
+                  total_laps: laps,
+                  total_racers: racers
+                }
               });
 
               store.setOpenModal(collection, false);

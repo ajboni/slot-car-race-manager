@@ -36,10 +36,25 @@ const GET_RACERS = gql`
   }
 `;
 
+const DELETE_RACER = gql`
+  mutation delete_racer($id: Int) {
+    delete_racer(where: { id: { _eq: $id } }) {
+      returning {
+        id
+        name
+      }
+    }
+  }
+`;
+
 const Racer_edit_screen = ({ item }) => {
   if (!item) return null;
   const [newName, setNewName] = useState(item.name);
   const [updateRacer, { data }] = useMutation(EDIT_RACER);
+
+  const [deleteRacer, {}] = useMutation(DELETE_RACER, {
+    refetchQueries: ["GetRacers"]
+  });
 
   const collection = "RACER";
   return (
@@ -53,10 +68,6 @@ const Racer_edit_screen = ({ item }) => {
       >
         <DialogTitle id="form-dialog-title">{l.EDIT_RACER}</DialogTitle>
         <DialogContent>
-          {/* <DialogContent Text> 
-            To subscribe to this website, please enter your email address here.
-            We will send updates occasionally.
-          </DialogContentText> */}
           <TextField
             autoFocus
             margin="dense"
@@ -85,7 +96,9 @@ const Racer_edit_screen = ({ item }) => {
         </DialogContent>
         <DialogActions>
           <Button
-            onClick={() => store.setOpenModal(collection, false)}
+            onClick={() => {
+              store.setOpenModal(collection, false);
+            }}
             color="primary"
           >
             {l.CANCEL}

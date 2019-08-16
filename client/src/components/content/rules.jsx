@@ -47,15 +47,19 @@ const CREATE_RULESET = gql`
 
 const Rules = observer(() => {
   const { loading, error, data } = useQuery(GET_RULES);
-  const [createRuleset, { createdRacer }] = useMutation(CREATE_RULESET, {
+  const [createRuleset, {}] = useMutation(CREATE_RULESET, {
+    refetchQueries: ["GetRules"]
+  });
+
+  const [deleteRuleset, {}] = useMutation(DELETE_RULESET, {
     refetchQueries: ["GetRules"]
   });
 
   let columns = [
-    { title: l.NAME, field: "id" },
+    { title: "ID", field: "id" },
     { title: l.NAME, field: "name" },
-    { title: l.NAME, field: "total_laps" },
-    { title: l.NAME, field: "total_racers" }
+    { title: l.TOTAL_LAPS, field: "total_laps" },
+    { title: l.TOTAL_RACERS, field: "total_racers" }
 
     // { title: l.WINS, field: "wins" }
   ];
@@ -80,7 +84,7 @@ const Rules = observer(() => {
         data={data.ruleset}
         columns={columns}
         title={l.RULESET}
-        actions={getAction(collection)}
+        actions={getAction(collection, deleteRuleset)}
       />
       <br />
       <Button
@@ -89,17 +93,11 @@ const Rules = observer(() => {
         color="secondary"
         onClick={async () => {
           // TODO: Find out why created racer is undefined...
-          const y = await createRuleset({ variables: { name: l.NEW_RACER } });
+          const y = await createRuleset({ variables: { name: l.NEW_RULESET } });
           const item = y.data.insert_ruleset.returning[0];
-          if (item) {
-            store.setSelectedItem(collection, item);
-            store.setOpenModal(collection, true);
-            // setselectedRacer(racer);
-            // racers_store.openModal(true);
-          }
         }}
       >
-        {l.NEW_RACER}
+        {l.NEW_RULESET}
       </Button>
     </Fragment>
   );

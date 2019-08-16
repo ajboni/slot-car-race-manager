@@ -22,7 +22,11 @@ let l = new LocalizedStrings({
     EMPTY_DATASOURCE_MESSAGE: "No records to display.",
     LANGUAGE: "Language",
     LOADING: "Loading...",
-    CONFIRM_DELETE: "Really delete "
+    CONFIRM_DELETE: "Really delete ",
+    NEW_RULESET: "New Ruleset",
+    EDIT_RULESET: "Edit Ruleset",
+    TOTAL_LAPS: "Total Laps",
+    TOTAL_RACERS: "Total Racers"
   },
   spa: {
     ACTIONS: "Acciones",
@@ -44,7 +48,11 @@ let l = new LocalizedStrings({
     SETTINGS: "Preferencias",
     LANGUAGE: "Idioma",
     LOADING: "Cargando...",
-    CONFIRM_DELETE: "Eliminar "
+    CONFIRM_DELETE: "Eliminar ",
+    NEW_RULESET: "Nueva Regla",
+    EDIT_RULESET: "Editar Regla",
+    TOTAL_LAPS: "Vueltas",
+    TOTAL_RACERS: "Pilotos"
   }
 });
 

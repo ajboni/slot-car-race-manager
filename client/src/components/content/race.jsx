@@ -75,6 +75,7 @@ const Race = observer(() => {
   if (!!!selectedRuleset) {
     setselectedRuleset(rulesets[0]);
   }
+
   return (
     <Paper className={classes.root}>
       <h1>{l.RACE}</h1>
@@ -110,13 +111,12 @@ export default Race;
 const Racer_Selector = observer(({ ruleset }) => {
   const classes = useStyles();
 
-  console.log(ruleset);
   const { loading, error, racers } = useQuery(GET_RACERS);
   const [selectedRacers, setSelectedRacers] = useState([]);
 
   let arr = [];
   for (let index = 0; index < ruleset.total_racers; index++) {
-    arr.push["ss"];
+    arr.push("sa");
   }
   if (loading) {
     return <div>Loading...</div>;
@@ -124,33 +124,33 @@ const Racer_Selector = observer(({ ruleset }) => {
   if (error) {
     return <div>Error! {error.message}</div>;
   }
+
+  /// TODO: NO SE PORQUE DA UNDEFINED RACER ACA!!!
+  console.log(racers);
   return (
     <Fragment>
       <div>{ruleset.name}</div>
+      <div>{ruleset.total_racers}</div>
+
       <FormControl className={classes.formControl}>
-        {arr.map(
-          (e, i) => (
-            <div key={i}>hello</div>
-          )
-          // <Fragment>
-          //   <InputLabel>{l.RACERS}</InputLabel>
-          //   <Select
-          //     key={i}
-          //     value={selectedRacers[i]}
-          //     onChange={e => {
-          //       setSelectedRacers(e.target.value);
-          //     }}
-          //   >
-          //     Racer Name
-          //     {/* {rulesets.map(ruleset => (
-          //       <MenuItem value={ruleset} key={ruleset.id}>
-          //         {ruleset.name} ( {ruleset.total_racers} {l.TOTAL_RACERS} |{" "}
-          //         {ruleset.total_laps} {l.TOTAL_LAPS} )
-          //       </MenuItem>
-          //     ))} */}
-          //   </Select>
-          // </Fragment>
-        )}
+        {arr.map((e, i) => (
+          <Fragment key={i}>
+            <InputLabel htmlFor="select-multiple">Name</InputLabel>
+            <Select
+              value={selectedRacers[i]}
+              onChange={e => {
+                setSelectedRacers(i, e.target.value);
+              }}
+            >
+              {/* Racer Name
+              {racers.map(racer => (
+                <MenuItem value={racer.id} key={racer.id}>
+                  {racer.name}
+                </MenuItem>
+              ))} */}
+            </Select>
+          </Fragment>
+        ))}
       </FormControl>
     </Fragment>
   );

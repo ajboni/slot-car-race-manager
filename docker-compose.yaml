@@ -6,24 +6,31 @@ services:
     ports:
       - "${POSTGRES_PORT}:5432"
     volumes:
-      - ./docker/volumes/scram-db:/var/lib/postgresql/data
+      - db_data:/var/lib/postgresql/data
       # uncomment for initial schema + data
       # TODO: spearate schema from data
       # - docker/init.sql:/docker-entrypoint-initdb.d/01_schema.sql
       # - docker/init.sql:/docker-entrypoint-initdb.d/02_data.sql
-      # - ./docker/schem_data.sql:/docker-entrypoint-initdb.d/schem_data.sql
+      - ./docker/01_schema_dump.sql:/docker-entrypoint-initdb.d/01_schema.sql
 
   graphql-engine:
-    image: hasura/graphql-engine:v1.0.0-beta.2
+    image: hasura/graphql-engine:latest.cli-migrations
     ports:
       - "${HASURA_PORT}:8080"
     depends_on:
       - "postgres"
-    # restart: always
+    restart: always
+    volumes:
+      - ./docker/metadata.json:/hasura-migrations/metadata.json
     environment:
       HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:@postgres:5432/postgres
       HASURA_GRAPHQL_ENABLE_CONSOLE: "true" # set to "false" to disable console
       ## uncomment next line to set an admin secret
       HASURA_GRAPHQL_ADMIN_SECRET: scram
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://postgres:5432"]
+      interval: 30s
+      timeout: 10s
+      retries: 20
 volumes:
   db_data:

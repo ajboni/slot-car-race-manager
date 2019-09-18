@@ -1,1 +1,120 @@
-{"functions":[],"remote_schemas":[],"query_collections":[],"allowlist":[],"tables":[{"table":"lap","object_relationships":[{"using":{"foreign_key_constraint_on":"race_id"},"name":"race","comment":null},{"using":{"foreign_key_constraint_on":"racer_id"},"name":"racer","comment":null}],"array_relationships":[],"insert_permissions":[],"select_permissions":[],"update_permissions":[],"delete_permissions":[],"event_triggers":[]},{"table":"race_racer","object_relationships":[{"using":{"foreign_key_constraint_on":"race_id"},"name":"race","comment":null},{"using":{"foreign_key_constraint_on":"racer_id"},"name":"racer","comment":null}],"array_relationships":[],"insert_permissions":[],"select_permissions":[],"update_permissions":[],"delete_permissions":[],"event_triggers":[]},{"table":"race","object_relationships":[],"array_relationships":[{"using":{"foreign_key_constraint_on":{"column":"race_id","table":"lap"}},"name":"laps","comment":null},{"using":{"foreign_key_constraint_on":{"column":"race_id","table":"race_racer"}},"name":"racers","comment":null}],"insert_permissions":[],"select_permissions":[],"update_permissions":[],"delete_permissions":[],"event_triggers":[]},{"table":"ruleset","object_relationships":[],"array_relationships":[],"insert_permissions":[],"select_permissions":[],"update_permissions":[],"delete_permissions":[],"event_triggers":[]},{"table":"racer","object_relationships":[],"array_relationships":[{"using":{"foreign_key_constraint_on":{"column":"racer_id","table":"lap"}},"name":"laps","comment":null},{"using":{"foreign_key_constraint_on":{"column":"racer_id","table":"race_racer"}},"name":"races","comment":null}],"insert_permissions":[],"select_permissions":[],"update_permissions":[],"delete_permissions":[],"event_triggers":[]}],"query_templates":[]}
+{
+  "functions": [],
+  "remote_schemas": [],
+  "query_collections": [],
+  "allowlist": [],
+  "tables": [
+    {
+      "table": "lap",
+      "object_relationships": [
+        {
+          "using": { "foreign_key_constraint_on": "race_id" },
+          "name": "race",
+          "comment": null
+        },
+        {
+          "using": { "foreign_key_constraint_on": "racer_id" },
+          "name": "racer",
+          "comment": null
+        }
+      ],
+      "array_relationships": [],
+      "insert_permissions": [],
+      "select_permissions": [],
+      "update_permissions": [],
+      "delete_permissions": [],
+      "event_triggers": []
+    },
+    {
+      "table": "race_racer",
+      "object_relationships": [
+        {
+          "using": { "foreign_key_constraint_on": "race_id" },
+          "name": "race",
+          "comment": null
+        },
+        {
+          "using": { "foreign_key_constraint_on": "racer_id" },
+          "name": "racer",
+          "comment": null
+        }
+      ],
+      "array_relationships": [],
+      "insert_permissions": [],
+      "select_permissions": [],
+      "update_permissions": [],
+      "delete_permissions": [],
+      "event_triggers": []
+    },
+    {
+      "table": "race",
+      "object_relationships": [],
+      "array_relationships": [
+        {
+          "using": {
+            "foreign_key_constraint_on": { "column": "race_id", "table": "lap" }
+          },
+          "name": "laps",
+          "comment": null
+        },
+        {
+          "using": {
+            "foreign_key_constraint_on": {
+              "column": "race_id",
+              "table": "race_racer"
+            }
+          },
+          "name": "racers",
+          "comment": null
+        }
+      ],
+      "insert_permissions": [],
+      "select_permissions": [],
+      "update_permissions": [],
+      "delete_permissions": [],
+      "event_triggers": []
+    },
+    {
+      "table": "ruleset",
+      "object_relationships": [],
+      "array_relationships": [],
+      "insert_permissions": [],
+      "select_permissions": [],
+      "update_permissions": [],
+      "delete_permissions": [],
+      "event_triggers": []
+    },
+    {
+      "table": "racer",
+      "object_relationships": [],
+      "array_relationships": [
+        {
+          "using": {
+            "foreign_key_constraint_on": {
+              "column": "racer_id",
+              "table": "lap"
+            }
+          },
+          "name": "laps",
+          "comment": null
+        },
+        {
+          "using": {
+            "foreign_key_constraint_on": {
+              "column": "racer_id",
+              "table": "race_racer"
+            }
+          },
+          "name": "races",
+          "comment": null
+        }
+      ],
+      "insert_permissions": [],
+      "select_permissions": [],
+      "update_permissions": [],
+      "delete_permissions": [],
+      "event_triggers": []
+    }
+  ],
+  "query_templates": []
+}

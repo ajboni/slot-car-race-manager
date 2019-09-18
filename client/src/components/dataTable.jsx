@@ -62,13 +62,17 @@ const DataTable = observer(({ data, columns, title, actions }) => {
 
   return (
     <MaterialTable
+      style={{ maxHeight: "80vh" }}
       columns={columns}
       data={data}
       title={title}
       icons={tableIcons}
       actions={actions}
       localization={localization}
-      options={{ toolbarButtonAlignment: "left", pageSize: 10 }}
+      options={{
+        toolbarButtonAlignment: "left",
+        pageSize: 10
+      }}
     />
   );
 });

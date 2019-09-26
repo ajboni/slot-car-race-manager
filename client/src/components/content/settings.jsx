@@ -7,11 +7,11 @@ import ToggleButton from "@material-ui/lab/ToggleButton";
 import Flag from "react-world-flags";
 import store from "../../store";
 import l from "../../constants/lang";
+import Paper from "@material-ui/core/Paper";
 
 const useStyles = makeStyles(theme => ({
   root: {
-    display: "flex",
-    backgroundColor: "#333"
+    padding: theme.spacing(3, 2)
   },
   leftIcon: {
     marginRight: theme.spacing(1),
@@ -40,7 +40,7 @@ const Settings = observer(() => {
   const classes = useStyles();
 
   return (
-    <Fragment>
+    <Paper className={classes.root}>
       <h1>{l.SETTINGS}</h1>
       <div className={classes.formItem}>
         <div className={classes.label}>{l.LANGUAGE}</div>
@@ -62,7 +62,7 @@ const Settings = observer(() => {
           ))}
         </ToggleButtonGroup>
       </div>
-    </Fragment>
+    </Paper>
   );
 });
 

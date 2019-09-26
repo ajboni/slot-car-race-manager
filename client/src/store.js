@@ -2,6 +2,7 @@ import { observable, configure, action } from "mobx";
 import * as c from "./constants/constants";
 import l from "./constants/lang";
 import { settings as s } from "./constants/constants";
+import socketIOClient from "socket.io-client";
 
 configure({
   enforceActions: "observed"
@@ -9,6 +10,12 @@ configure({
 
 class Store {
   id = Math.random();
+  constructor() {
+    var socket = socketIOClient.connect("http://127.0.0.1:10002"); // ip of wifi shield and port of socket
+    socket.on("update", function(data) {
+      console.log(data);
+    });
+  }
 
   @action init() {
     console.log("Loading user Settings...");
@@ -19,6 +26,9 @@ class Store {
   @observable finished = false;
   @observable language = c.languages.spa;
   @observable appState = {
+    RACE: {
+      status: "stopped"
+    },
     RACER: {
       selectedItem: null,
       showEditItemModal: false

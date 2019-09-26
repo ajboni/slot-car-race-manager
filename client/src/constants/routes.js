@@ -9,6 +9,7 @@ import Rules from "../components/content/rules";
 import Stats from "../components/content/stats";
 import Settings from "../components/content/settings";
 import l from "./lang";
+import Debug from "../components/content/debug";
 
 export const routes = [
   {
@@ -52,6 +53,13 @@ export const routes = [
     label: "SETTINGS",
     icon: "settings",
     component: Settings,
+    exact: false
+  },
+  {
+    target: "/debug",
+    label: "DEBUG",
+    icon: "build",
+    component: Debug,
     exact: false
   }
 ];

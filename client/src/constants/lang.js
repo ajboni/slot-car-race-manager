@@ -26,7 +26,8 @@ let l = new LocalizedStrings({
     NEW_RULESET: "New Ruleset",
     EDIT_RULESET: "Edit Ruleset",
     TOTAL_LAPS: "Total Laps",
-    TOTAL_RACERS: "Total Racers"
+    TOTAL_RACERS: "Total Racers",
+    DEBUG: "Debug"
   },
   spa: {
     ACTIONS: "Acciones",
@@ -52,7 +53,8 @@ let l = new LocalizedStrings({
     NEW_RULESET: "Nueva Regla",
     EDIT_RULESET: "Editar Regla",
     TOTAL_LAPS: "Vueltas",
-    TOTAL_RACERS: "Pilotos"
+    TOTAL_RACERS: "Pilotos",
+    DEBUG: "Pruebas"
   }
 });
 

@@ -5,20 +5,25 @@ import threading
 import datetime
 import pyfirmata
 import time
+import serial
+
+# COM4 19200
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app, cors_allowed_origins='*')
 
 
-def runSocketIO():
-    print("sss")
-    socketio.run(app, host="127.0.0.1", port=10002)
-
-
 @app.route("/")
 def hello():
     return "Hello World!"
+
+
+@app.route("/kill")
+def kill():
+    socketio.stop()
+    return "Killed!"
 
 
 @socketio.on('hello')
@@ -28,33 +33,45 @@ def handle_message(args):
         datetime.datetime.now())}, broadcast=True)
 
 
-def runArduino():
-    board = pyfirmata.Arduino('COM4')
-    sw = board.get_pin('d:2:i')
-    led = board.get_pin('d:13:o')
-    it = pyfirmata.util.Iterator(board)
-    it.start()
+def runArduino(name):
+    arduino = serial.Serial(port='COM4', baudrate=19200, timeout=2)
     while True:
-        value = sw.read()
-        if value:
-            led.write(1)
-            socketio.emit('update', {'data': str(
-                datetime.datetime.now())}, broadcast=True)
-        else:
-            led.write(0)
-    board.exit()
+        data_raw = arduino.read(3)
+        print(data_raw)
+    # board = pyfirmata.Arduino('COM4')
+    # sw = board.get_pin('d:2:i')
+    # led = board.get_pin('d:13:o')
+    # it = pyfirmata.util.Iterator(board)
+    # it.start()
+    # while True:
+    #     value = sw.read()
+    #     if value:
+    #         led.write(1)
+    #         socketio.emit('update', {'data': str(
+    #             datetime.datetime.now())}, broadcast=True)
+    #     else:
+    #         led.write(0)
+    # board.exit()
+
+# def runSocketIO(name):
+#     socketio.run(app, host="127.0.0.1", port=10002)
 
 
 if __name__ == '__main__':
-    s = runSocketIO()
-    s.daemon = True
-    s.start()
-    f = runArduino()
-    f.daemon = True
-    f.start()
+    # threading.Thread(target=app.run).start()
+    arduino_thread = threading.Thread(
+        target=runArduino, args=(1,), daemon=True)
+    arduino_thread.start()
+    socketio.run(app, host="127.0.0.1", port=10002)
 
-    while True:
-        time.sleep(1)
+    # socket_thread = threading.Thread(
+    #     target=runSocketIO, args=(1,), daemon=True)
+    # arduino_thread = threading.Thread(
+    #     target=runArduino, args=(2,), daemon=True)
+
+    # # socket_thread.start()
+    # arduino_thread.start()
+    # time.sleep(5)
 
     # threading.Thread(target=runArduino).start()
     # threading.Thread(target=runSocketIO).start()

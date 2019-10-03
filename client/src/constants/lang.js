@@ -27,7 +27,9 @@ let l = new LocalizedStrings({
     EDIT_RULESET: "Edit Ruleset",
     TOTAL_LAPS: "Total Laps",
     TOTAL_RACERS: "Total Racers",
-    DEBUG: "Debug"
+    DEBUG: "Debug",
+    ERR_NO_RULESET: "Please add at least one ruleset before continuing...",
+    ERR_NO_RACER: "Please add at least one racer before continuing...",
   },
   spa: {
     ACTIONS: "Acciones",
@@ -54,7 +56,9 @@ let l = new LocalizedStrings({
     EDIT_RULESET: "Editar Regla",
     TOTAL_LAPS: "Vueltas",
     TOTAL_RACERS: "Pilotos",
-    DEBUG: "Pruebas"
+    DEBUG: "Pruebas",
+    ERR_NO_RULESET: "Por favor agregue al menos una regla antes de continuar...",
+    ERR_NO_RACER: "Por favor agregue al menos un piloto antes de continuar...",
   }
 });
 

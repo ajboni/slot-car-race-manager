@@ -56,15 +56,18 @@ const useStyles = makeStyles(theme => ({
 
 const Race = observer(() => {
   const classes = useStyles();
-  const { loading, error, data } = useQuery(GET_RULES);
-  const { loading_racers, error_racers, racers } = useQuery(GET_RACERS);
+  const { loading: loading_ruleset, error: error_ruleset, data:ruleset_data} = useQuery(GET_RULES);
+  const { loading: loading_racers, error: error_racers, data:racers_data} = useQuery(GET_RACERS);
+
 
   const [selectedRuleset, setselectedRuleset] = useState(null);
-  const rulesets = data.ruleset;
-  if (loading | loading_racers) {
+
+  
+
+  if (loading_ruleset | loading_racers) {
     return <div>Loading...</div>;
   }
-  if (error | error_racers) {
+  if (error_ruleset | error_racers) {
     return (
       <div>
         Error! {error.message} - {error_racers.message}
@@ -72,9 +75,21 @@ const Race = observer(() => {
     );
   }
 
+    const rulesets = ruleset_data.ruleset;
+    const racers = racers_data.racer;
+    console.log(racers_data)
+
+
+  if(_.isEmpty(rulesets)) {
+    return <div>{l.ERR_NO_RULESET}</div>;
+  }
+  if(_.isEmpty(racers)) {
+    return <div>{l.ERR_NO_RACER}</div>;
+  }
   if (!!!selectedRuleset) {
     setselectedRuleset(rulesets[0]);
   }
+
 
   return (
     <Paper className={classes.root}>
@@ -101,32 +116,28 @@ const Race = observer(() => {
       <br />
       <br />
 
-      <Racer_Selector ruleset={selectedRuleset} />
+      <Racer_Selector ruleset={selectedRuleset} racers={racers} />
     </Paper>
   );
 });
 
 export default Race;
 
-const Racer_Selector = observer(({ ruleset }) => {
+const Racer_Selector = observer(({ ruleset, racers }) => {
+
+  // TODO: IMPLEMENT SHUTTLE:  http://react-material.fusetheme.com/documentation/material-ui-components/transfer-list
   const classes = useStyles();
 
-  const { loading, error, racers } = useQuery(GET_RACERS);
+  // const { loading, error, racers } = useQuery(GET_RACERS);
   const [selectedRacers, setSelectedRacers] = useState([]);
 
   let arr = [];
   for (let index = 0; index < ruleset.total_racers; index++) {
-    arr.push("sa");
-  }
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-  if (error) {
-    return <div>Error! {error.message}</div>;
+    arr.push(racers[0]);
   }
 
-  /// TODO: NO SE PORQUE DA UNDEFINED RACER ACA!!!
-  console.log(racers);
+  console.log(arr)
+  
   return (
     <Fragment>
       <div>{ruleset.name}</div>
@@ -135,19 +146,26 @@ const Racer_Selector = observer(({ ruleset }) => {
       <FormControl className={classes.formControl}>
         {arr.map((e, i) => (
           <Fragment key={i}>
-            <InputLabel htmlFor="select-multiple">Name</InputLabel>
+            <InputLabel htmlFor="select-multiple">Chose Player</InputLabel>
             <Select
+              inputProps={{
+                name: 'age',
+                id: 'select-multiple',
+              }}
               value={selectedRacers[i]}
               onChange={e => {
-                setSelectedRacers(i, e.target.value);
+                
+                let x = selectedRacers;
+                x[i] = e.target.value;
+                setSelectedRacers(x);
+                console.log(selectedRacers[i])
               }}
             >
-              {/* Racer Name
               {racers.map(racer => (
-                <MenuItem value={racer.id} key={racer.id}>
+                <MenuItem value={racer} key={racer.id}>
                   {racer.name}
                 </MenuItem>
-              ))} */}
+              ))}
             </Select>
           </Fragment>
         ))}

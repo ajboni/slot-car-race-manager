@@ -19,7 +19,7 @@ services:
       - "${HASURA_PORT}:8080"
     depends_on:
       - "postgres"
-    restart: always
+    # restart: always
     volumes:
       - ./docker/metadata.json:/hasura-migrations/metadata.json
     environment:

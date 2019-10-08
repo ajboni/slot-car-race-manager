@@ -22,6 +22,7 @@ let l = new LocalizedStrings({
     EMPTY_DATASOURCE_MESSAGE: "No records to display.",
     LANGUAGE: "Language",
     LOADING: "Loading...",
+    START_RACE: "Start Race",
     CONFIRM_DELETE: "Really delete ",
     NEW_RULESET: "New Ruleset",
     EDIT_RULESET: "Edit Ruleset",
@@ -30,6 +31,8 @@ let l = new LocalizedStrings({
     DEBUG: "Debug",
     ERR_NO_RULESET: "Please add at least one ruleset before continuing...",
     ERR_NO_RACER: "Please add at least one racer before continuing...",
+    ERR_DUPLICATED_RACER: "ERROR: Racer missing or already assigned.",
+    CHOOSE_RACER: "Choose Racer"
   },
   spa: {
     ACTIONS: "Acciones",
@@ -51,14 +54,18 @@ let l = new LocalizedStrings({
     SETTINGS: "Preferencias",
     LANGUAGE: "Idioma",
     LOADING: "Cargando...",
+    START_RACE: "Iniciar Carrera",
     CONFIRM_DELETE: "Eliminar ",
     NEW_RULESET: "Nueva Regla",
     EDIT_RULESET: "Editar Regla",
     TOTAL_LAPS: "Vueltas",
     TOTAL_RACERS: "Pilotos",
     DEBUG: "Pruebas",
-    ERR_NO_RULESET: "Por favor agregue al menos una regla antes de continuar...",
+    ERR_NO_RULESET:
+      "Por favor agregue al menos una regla antes de continuar...",
     ERR_NO_RACER: "Por favor agregue al menos un piloto antes de continuar...",
+    ERR_DUPLICATED_RACER: "ERROR: Piloto ya asignado o inexistente.",
+    CHOOSE_RACER: "Elegir Piloto"
   }
 });
 

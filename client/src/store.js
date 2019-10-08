@@ -36,6 +36,9 @@ class Store {
     RULESET: {
       showEditItemModal: false,
       selectedItem: null
+    },
+    RACE: {
+      // selectedRacers: new Array(15)
     }
   };
 
@@ -63,6 +66,14 @@ class Store {
   }
   @action setOpenModal(collection, value) {
     this.appState[collection].showEditItemModal = value;
+  }
+
+  @action setSelectedRacers(index, value) {
+    console.log(index);
+    this.appState.RACE.selectedRacers[index] = value;
+  }
+  @action addSelectedRacer(value) {
+    this.appState.RACE.selectedRacers.push(value);
   }
 }
 

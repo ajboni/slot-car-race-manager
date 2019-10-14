@@ -3,7 +3,6 @@ from flask_socketio import SocketIO
 import urllib.request
 import threading
 import datetime
-import pyfirmata
 import time
 import serial
 
@@ -13,7 +12,7 @@ import serial
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app, cors_allowed_origins='*')
-
+arduino = serial.Serial(port='/dev/ttyACM0', baudrate=115200, timeout=2)
 
 @app.route("/")
 def hello():
@@ -26,18 +25,32 @@ def kill():
     return "Killed!"
 
 
-@socketio.on('hello')
+@socketio.on('connect')
+def handle_conncetion():
+    print('')
+    print('====== Client connected ======')
+    print('')
+
+
+@socketio.on('startRace')
 def handle_message(args):
     print('received message: %s' % args)
-    socketio.emit('news', {'data': str(
-        datetime.datetime.now())}, broadcast=True)
+    print('command sent: START RACE')
+    buf = bytearray()
+    buf.append(args)
+    arduino.write(buf)
+    
+    # socketio.emit('news', {'data': str(
+    #     datetime.datetime.now())}, broadcast=True)
 
 
 def runArduino(name):
-    arduino = serial.Serial(port='COM4', baudrate=19200, timeout=2)
+    
     while True:
-        data_raw = arduino.read(3)
-        print(data_raw)
+        #arduino.write(b"Hellos")
+        # data_raw = arduino.read(3)
+        # print(data_raw)
+        time.sleep(5)
     # board = pyfirmata.Arduino('COM4')
     # sw = board.get_pin('d:2:i')
     # led = board.get_pin('d:13:o')
@@ -62,7 +75,7 @@ if __name__ == '__main__':
     arduino_thread = threading.Thread(
         target=runArduino, args=(1,), daemon=True)
     arduino_thread.start()
-    socketio.run(app, host="127.0.0.1", port=10002)
+    socketio.run(app, host="127.0.0.1", port=10002, debug=True)
 
     # socket_thread = threading.Thread(
     #     target=runSocketIO, args=(1,), daemon=True)

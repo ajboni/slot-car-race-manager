@@ -4,6 +4,8 @@ import l from "./constants/lang";
 import { settings as s } from "./constants/constants";
 import socketIOClient from "socket.io-client";
 
+var socket = socketIOClient.connect("http://127.0.0.1:10002"); // ip of wifi shield and port of socket
+
 configure({
   enforceActions: "observed"
 });
@@ -11,7 +13,6 @@ configure({
 class Store {
   id = Math.random();
   constructor() {
-    var socket = socketIOClient.connect("http://127.0.0.1:10002"); // ip of wifi shield and port of socket
     socket.on("update", function(data) {
       console.log(data);
     });
@@ -74,6 +75,10 @@ class Store {
   }
   @action addSelectedRacer(value) {
     this.appState.RACE.selectedRacers.push(value);
+  }
+
+  @action sendMessage(event, params) {
+    socket.emit(event, params);
   }
 }
 

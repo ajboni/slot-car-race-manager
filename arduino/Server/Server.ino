@@ -14,6 +14,11 @@ const int racer2Pin = 2;
 const int racer3Pin = 3;
 const int racer4Pin = 4;
 
+// Messages 
+const byte C_START_RACE = B00010000;
+const byte C_FALSE_START = B00100000;
+
+
 // Debug
 int buttonState = 0;         // variable for reading the pushbutton status
 int ledState = 0;         // variable for reading the pushbutton status
@@ -36,6 +41,7 @@ RaceState raceState = IDLE;
 
 
 int totalLaps = 0;
+int totalRacers = 2;
 int serverCommand = -1;
 unsigned long raceStartTime = 0;
 unsigned long raceFinishTime = 0;
@@ -95,7 +101,7 @@ void stateMachineRun() {
 void idle() {  
 
   // Start Race 
-  if(serverCommand == B00000001) {
+  if(checkStartRace(serverCommand)) {    
     setSate(COUNTDOWN);
   }
 } 
@@ -123,4 +129,38 @@ void finished() {
 /* Set a race state  */
 void setSate(RaceState state) {
   raceState = state;
+}
+
+int checkFalseStart() {  
+  return 0;
+}
+
+bool checkStartRace(byte cmd) {
+
+  byte command = stripCommand(cmd);
+  byte value = stripValue(cmd);
+
+  if(command == C_START_RACE) {
+      Serial.write(command);
+      Serial.write(value);
+      totalRacers = value;
+      return true;
+  }
+  else {
+    return false;
+  }
+  
+}
+
+byte stripValue (byte b) {
+  b = b << 4;
+  b = b >> 4;
+  return b;
+}
+
+byte stripCommand (byte b) {
+   // Shift value bytes into non existence
+   b = b >> 4;
+   b = b << 4;
+   return b;
 }

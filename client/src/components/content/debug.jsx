@@ -28,7 +28,8 @@ const Debug = observer(() => {
     console.log("startRace");
     audio.play();
 
-    store.sendMessage("startRace", 0b00000001);
+
+    store.sendMessage("startRace", 0b00010000);
   }
 
   return (

@@ -37,7 +37,7 @@ def handle_message(args):
     print('received message: %s' % args)
     print('command sent: START RACE')
     buf = bytearray()
-    buf.append(args)
+    buf.append(args)    
     arduino.write(buf)
     
     # socketio.emit('news', {'data': str(
@@ -48,9 +48,10 @@ def runArduino(name):
     
     while True:
         #arduino.write(b"Hellos")
-        # data_raw = arduino.read(3)
-        # print(data_raw)
-        time.sleep(5)
+        data_raw = arduino.read()
+        if(data_raw != b''):
+            print(data_raw)
+        # time.sleep()
     # board = pyfirmata.Arduino('COM4')
     # sw = board.get_pin('d:2:i')
     # led = board.get_pin('d:13:o')

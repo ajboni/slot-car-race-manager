@@ -82,6 +82,10 @@ const Race = observer(() => {
     );
   }
 
+  if (_.isEmpty(ruleset_data)) {
+    return <div>{l.ERR_NO_RULESET}</div>;
+  }
+
   const rulesets = ruleset_data.ruleset;
   const racers = racers_data.racer;
 

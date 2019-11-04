@@ -10,7 +10,7 @@ import gql from "graphql-tag";
 import { useQuery, useMutation } from "@apollo/react-hooks";
 import store from "../../store";
 import { getAction } from "../dataTable";
-import { TextField } from "@material-ui/core";
+import { TextField, LinearProgress } from "@material-ui/core";
 
 const GET_RACERS = gql`
   query GetRacers {
@@ -55,7 +55,7 @@ const Racers = observer(() => {
   });
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <LinearProgress />;
   }
   if (error) {
     return <div>Error! {error.message}</div>;

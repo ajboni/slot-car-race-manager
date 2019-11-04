@@ -13,6 +13,10 @@ import Store from "./store";
 import { ApolloProvider } from "react-apollo";
 import { client } from "./apollo";
 import { ApolloProvider as ApolloHooksProvider } from "@apollo/react-hooks";
+import store from "./store";
+import { observer } from "mobx-react";
+import { LinearProgress } from "@material-ui/core";
+
 
 const theme = createMuiTheme({
   palette: {
@@ -27,7 +31,10 @@ const theme = createMuiTheme({
 
 Store.init();
 
-function App() {
+const App = observer(() => {
+  if(!store.initialized) {
+    return <LinearProgress />;
+  }
   return (
     <ApolloProvider client={client}>
       <ApolloHooksProvider client={client}>
@@ -39,6 +46,6 @@ function App() {
       </ApolloHooksProvider>
     </ApolloProvider>
   );
-}
+});
 
 export default App;

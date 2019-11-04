@@ -11,6 +11,7 @@ import { useQuery, useMutation } from "@apollo/react-hooks";
 import { getAction } from "../dataTable";
 import Ruleset_edit_screen from "./ruleset_edit";
 import store from "../../store";
+import { LinearProgress } from "@material-ui/core";
 
 const GET_RULES = gql`
   query GetRules {
@@ -65,7 +66,7 @@ const Rules = observer(() => {
   ];
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <LinearProgress />;
   }
   if (error) {
     return <div>Error! {error.message}</div>;

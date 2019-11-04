@@ -14,9 +14,21 @@ const int racer2Pin = 2;
 const int racer3Pin = 3;
 const int racer4Pin = 4;
 
-// Messages 
-const byte C_START_RACE = B00010000;
-const byte C_FALSE_START = B00100000;
+///// === MESAGGES === /////
+
+// Commands
+const byte C_START_RACE =           B00010000;
+const byte C_FALSE_START =          B00100000;
+const byte C_RESTART_RACE =         B11111110;
+
+// Status messages
+const byte C_GET_STATUS =           B11111111;
+const byte C_STATUS_IDLE =          B11110000;
+const byte C_STATUS_COUNTDOWN =     B11110001;
+const byte C_STATUS_FALSE_START =   B11110010;
+const byte C_STATUS_STARTED =       B11110011;
+const byte C_STATUS_FINISHED =      B11110100;
+
 
 
 // Debug
@@ -25,11 +37,11 @@ int ledState = 0;         // variable for reading the pushbutton status
 
 // Race Setup
 enum RaceState {
-  IDLE,
-  COUNTDOWN,
-  FALSE_START,
-  STARTED,
-  FINISHED
+  _IDLE = B11110000,
+  COUNTDOWN = C_STATUS_COUNTDOWN,
+  FALSE_START = C_STATUS_FALSE_START,
+  STARTED = C_STATUS_STARTED,
+  FINISHED = C_STATUS_FINISHED
 };
 
 struct ServerMessages {
@@ -37,8 +49,7 @@ struct ServerMessages {
   bool restarRace;
 };
 
-RaceState raceState = IDLE;
-
+RaceState raceState = _IDLE;
 
 int totalLaps = 0;
 int totalRacers = 2;
@@ -70,14 +81,26 @@ void loop() {
   stateMachineRun();
   
   // Minimum tick
-  // delay(1);
+   delay(10);
 }  
 
 void stateMachineRun() {
   serverCommand =  Serial.read();
+  
+  // Quick response to status query
+  if(serverCommand == C_GET_STATUS) {
+    Serial.write(raceState);
+  }
+
+  if(serverCommand == C_RESTART_RACE) {
+    setState(_IDLE);
+    Serial.write(raceState);
+  }
+  
+
   switch (raceState)
   {
-  case IDLE:
+  case _IDLE:
     idle();
     break;
   case COUNTDOWN: 
@@ -99,16 +122,16 @@ void stateMachineRun() {
 
 /* Check for race start message and initialize countdown. */
 void idle() {  
-
+  
   // Start Race 
-  if(checkStartRace(serverCommand)) {    
-    setSate(COUNTDOWN);
+  if(checkStartRace(serverCommand)) {         
+    setState(COUNTDOWN);
+    Serial.write(raceState);
   }
 } 
 
 /* Run the timer and check for false starts. */
-void countdown() {
-  
+void countdown() {  
 }
 
 /* Notify Server about false start and wait for new command to re call the countdown. */
@@ -127,7 +150,7 @@ void finished() {
 }
 
 /* Set a race state  */
-void setSate(RaceState state) {
+void setState(RaceState state) {
   raceState = state;
 }
 

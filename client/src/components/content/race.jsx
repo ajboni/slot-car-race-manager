@@ -19,7 +19,8 @@ import {
   Input,
   FormHelperText,
   MenuItem,
-  Divider
+  Divider,
+  LinearProgress
 } from "@material-ui/core";
 import { toJS } from "mobx";
 
@@ -72,7 +73,7 @@ const Race = observer(() => {
   const [selectedRuleset, setselectedRuleset] = useState(null);
 
   if (loading_ruleset | loading_racers) {
-    return <div>Loading...</div>;
+    return <LinearProgress />;
   }
   if (error_ruleset | error_racers) {
     return (

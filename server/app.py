@@ -5,14 +5,35 @@ import threading
 import datetime
 import time
 import serial
+import os
+import binascii
+import yaml
 
-# COM4 19200
+config = ""
+with open('../config.yaml') as f:
+    config = yaml.load(f, Loader=yaml.FullLoader)
 
 
+# Config variables
+COM_BAUDRATE = config["COM_BAUDRATE"]
+COM_PORT = config["COM_PORT"]
+BACKEND_PORT = config["BACKEND_PORT"]
+BACKEND_IP = config["BACKEND_IP"]
+
+# Flask Init
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
-socketio = SocketIO(app, cors_allowed_origins='*')
-arduino = serial.Serial(port='/dev/ttyACM0', baudrate=115200, timeout=2)
+socketio = SocketIO(app, cors_allowed_origins='*', async_mode='threading')
+arduino = serial.Serial(port=COM_PORT, baudrate=COM_BAUDRATE, timeout=2)
+
+def commandToString(cmd):
+    
+    try:
+        command = list(config.keys())[list(config.values()).index(cmd)] 
+    except:
+        command = "UNKNOWN COMMAND"            
+    msg = cmd + " ==> " + command
+    return msg
 
 @app.route("/")
 def hello():
@@ -40,55 +61,50 @@ def handle_message(args):
     buf.append(args)    
     arduino.write(buf)
     
-    # socketio.emit('news', {'data': str(
-    #     datetime.datetime.now())}, broadcast=True)
+@socketio.on('getStatus')
+def getStatus(args):
+    print('')
+    print('=== New Message from Frontend === ')
+    intargs = int(args)
+    binargs = bin(args)
+    print('received message:    %s' % commandToString(binargs))
+ 
+    # print(bin(int(int(args),base=16)))
 
+    buf = bytearray()
+    buf.append(args)    
+    arduino.write(buf)
+    print('command sent to arduino')
 
-def runArduino(name):
+def runArduino(name, socket):
     
+    # emit an event
+    print("=== Incoming Arduino Data: === ")    
     while True:
         #arduino.write(b"Hellos")
         data_raw = arduino.read()
         if(data_raw != b''):
-            print(data_raw)
-        # time.sleep()
-    # board = pyfirmata.Arduino('COM4')
-    # sw = board.get_pin('d:2:i')
-    # led = board.get_pin('d:13:o')
-    # it = pyfirmata.util.Iterator(board)
-    # it.start()
-    # while True:
-    #     value = sw.read()
-    #     if value:
-    #         led.write(1)
-    #         socketio.emit('update', {'data': str(
-    #             datetime.datetime.now())}, broadcast=True)
-    #     else:
-    #         led.write(0)
-    # board.exit()
+            print("")
+            print("=== Incoming Arduino Data: === ")
+            # print(data_raw) 
+            hexx = binascii.hexlify(data_raw)
+            bindata = bin(int(hexx,base=16))        
+            print(commandToString(bindata))          
 
-# def runSocketIO(name):
-#     socketio.run(app, host="127.0.0.1", port=10002)
+            try:                            
+                print("[OK]     Command Sent to frontend")
+                socketio.emit('update', {'data': bindata})
 
+                pass
+            except:
+                print("[ERROR]  Command Sent to frontend FAILED")
+                pass
 
 if __name__ == '__main__':
-    # threading.Thread(target=app.run).start()
+        
     arduino_thread = threading.Thread(
-        target=runArduino, args=(1,), daemon=True)
+         target=runArduino, args=(1,socketio,), daemon=True)
     arduino_thread.start()
-    socketio.run(app, host="127.0.0.1", port=10002, debug=True)
-
-    # socket_thread = threading.Thread(
-    #     target=runSocketIO, args=(1,), daemon=True)
-    # arduino_thread = threading.Thread(
-    #     target=runArduino, args=(2,), daemon=True)
-
-    # # socket_thread.start()
-    # arduino_thread.start()
-    # time.sleep(5)
-
-    # threading.Thread(target=runArduino).start()
-    # threading.Thread(target=runSocketIO).start()
-# @socketio.on('connect')
-# def test_connect():
-#     socketio.send('hello', {'from': 'Connected', 'msg': 'dsdsd'})
+    socketio.run(app, host=BACKEND_IP, port=BACKEND_PORT, debug=True)
+    
+    

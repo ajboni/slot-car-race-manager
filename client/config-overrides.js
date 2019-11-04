@@ -1,9 +1,14 @@
 const {
   addDecoratorsLegacy,
   override,
-  disableEsLint
+  disableEsLint,
+  removeModuleScopePlugin
 } = require("customize-cra");
 
-module.exports = {
-  webpack: override(addDecoratorsLegacy(), disableEsLint())
-};
+
+module.exports = override(
+    removeModuleScopePlugin(),
+    addDecoratorsLegacy(),
+    disableEsLint(),    
+    
+);    

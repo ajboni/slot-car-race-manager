@@ -1,3 +1,9 @@
 flask
 flask_socketio
 datetime
+setuptools
+threading
+time
+serial
+os
+eventlet

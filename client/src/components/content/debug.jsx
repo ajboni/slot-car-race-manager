@@ -6,6 +6,7 @@ import l from "../../constants/lang";
 import { Button } from "@material-ui/core";
 import store from "../../store";
 import Bleep1 from "../../audio/BLEEP1.wav";
+import StateMachine from "./debug/state_machine";
 var audio = new Audio(Bleep1);
 
 const useStyles = makeStyles(theme => ({
@@ -18,6 +19,9 @@ const useStyles = makeStyles(theme => ({
   },
   selectEmpty: {
     marginTop: theme.spacing(2)
+  },
+  button: {    
+    margin: "10px"
   }
 }));
 
@@ -26,15 +30,25 @@ const Debug = observer(() => {
 
   function startRace() {
     console.log("startRace");
-    audio.play();
+    audio.play();    
+    store.sendMessage("startRace", store.config.START_RACE_1);
+  }
 
+  function getStatus() {
+    console.log("getStatus");
+    store.sendMessage("getStatus", store.config.GET_STATUS);
 
-    store.sendMessage("startRace", 0b00010000);
+  }
+
+  function restartRace() {
+    console.log("restartRace");
+    store.sendMessage("getStatus", store.config.RESTART_RACE);
+
   }
 
   return (
     <Paper className={classes.root}>
-      <h1>{l.Debug}</h1>
+      <h3>{l.DEBUG}</h3>
       <Button
         variant="contained"
         className={classes.button}
@@ -43,6 +57,23 @@ const Debug = observer(() => {
       >
         {l.START_RACE}
       </Button>
+      <Button
+        variant="contained"
+        className={classes.button}
+        color="primary"
+        onClick={restartRace}
+      >
+        {l.RESTART_RACE}
+      </Button>
+      <Button
+        variant="contained"
+        className={classes.button}
+        color="primary"
+        onClick={getStatus}
+      >
+        {l.GET_STATUS}
+      </Button>
+      <StateMachine status="status"/>
     </Paper>
   );
 });

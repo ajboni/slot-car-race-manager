@@ -3,12 +3,19 @@ import * as c from "./constants/constants";
 import l from "./constants/lang";
 import { settings as s } from "./constants/constants";
 import socketIOClient from "socket.io-client";
-
 import configFile from "../../config.yaml"
 import YAML from 'yaml'
 
+import Bleep1 from "./audio/BLEEP1.wav";
+import Bleep2 from "./audio/BLEEP2.wav";
+import Buzzer from "./audio/buzzer.wav";
+var bleep1 = new Audio(Bleep1);
+var bleep2 = new Audio(Bleep2);
+var buzzer = new Audio(Buzzer);
 
-const fetchConfig = async() =>  {
+
+
+const fetchConfig = async () => {
   const response = await fetch(configFile);
   const text = await response.text();
   const yaml = YAML.parse(text)
@@ -20,21 +27,21 @@ function bit_clear(num, bit) {
 }
 
 
-function stripValue (b) {
-  b = bit_clear(b,4)
-  b = bit_clear(b,5)
-  b = bit_clear(b,6)
-  b = bit_clear(b,7)
+function stripValue(b) {
+  b = bit_clear(b, 4)
+  b = bit_clear(b, 5)
+  b = bit_clear(b, 6)
+  b = bit_clear(b, 7)
   return b;
 }
 
-function stripCommand (b) {
-   // Shift value bytes into non existence
-   b = bit_clear(b,0)
-   b = bit_clear(b,1)
-   b = bit_clear(b,2)
-   b = bit_clear(b,3)
-   return b;
+function stripCommand(b) {
+  // Shift value bytes into non existence
+  b = bit_clear(b, 0)
+  b = bit_clear(b, 1)
+  b = bit_clear(b, 2)
+  b = bit_clear(b, 3)
+  return b;
 }
 
 configure({
@@ -55,22 +62,41 @@ class Store {
     this.config = config;
     this.socket = socketIOClient.connect(config.BACKEND_IP + ':' + config.BACKEND_PORT); // ip of wifi shield and port of socket
     this.socket.on("update", data => {
+      const fullcmd = data.data;
+      const command = stripCommand(fullcmd);
+      const value = stripValue(fullcmd);
 
-      const command = stripCommand(data.data);
-      const value = stripValue(data.data);
-      
       console.log(command);
       switch (command) {
+
+        // Using idle as its the one with 0000 on the parameters bit section
         case stripCommand(config.STATUS_IDLE):
-          console.log(value)
-          runInAction(()=> this.appState.RACE.status = data.data);
-         
+          runInAction(() => this.appState.RACE.status = fullcmd);
           break;
-      
+
+        // Using idle as its the one with 0000 on the parameters bit section
+        case stripCommand(config.COUNTDOWN):
+          // runInAction(() => this.appState.RACE.status = config.STATUS_COUNTDOWN);
+          switch (fullcmd) {
+            case config.COUNTDOWN_GO:
+              bleep2.play();
+              break;
+
+            default:
+              bleep1.play();
+              break;
+          }
+          break;
+
+        case stripCommand(config.FALSE_START):
+          buzzer.play();
+          // runInAction(() => this.appState.RACE.status = fullcmd);
+          break;
+
         default:
           break;
       }
-      
+
       // TODO: Bitshift for commands + values
       // Add logic for each command
     });
@@ -79,7 +105,7 @@ class Store {
     console.log("Loading user Settings...");
     const lang = this.getItem(s.LANGUAGE, "eng");
     this.setLanguage(lang, false);
-    runInAction(()=> this.initialized = true)
+    runInAction(() => this.initialized = true)
     console.log("Done.")
   }
 
@@ -136,9 +162,9 @@ class Store {
   }
 
   @action sendMessage(event, params) {
-    this.socket.emit(event,Number(params));
+    this.socket.emit(event, Number(params));
   }
-  
+
 }
 
 export default new Store();

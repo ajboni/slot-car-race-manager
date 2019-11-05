@@ -3,11 +3,9 @@ import { observer } from "mobx-react";
 import Paper from "@material-ui/core/Paper";
 import { makeStyles } from "@material-ui/styles";
 import l from "../../constants/lang";
-import { Button } from "@material-ui/core";
+import { Button, ButtonGroup } from "@material-ui/core";
 import store from "../../store";
-import Bleep1 from "../../audio/BLEEP1.wav";
 import StateMachine from "./debug/state_machine";
-var audio = new Audio(Bleep1);
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -20,8 +18,8 @@ const useStyles = makeStyles(theme => ({
   selectEmpty: {
     marginTop: theme.spacing(2)
   },
-  button: {    
-    margin: "10px"
+  button: {
+    // margin: "10px"
   }
 }));
 
@@ -30,8 +28,7 @@ const Debug = observer(() => {
 
   function startRace() {
     console.log("startRace");
-    audio.play();    
-    store.sendMessage("startRace", store.config.START_RACE_1);
+    store.sendMessage("startRace", store.config.START_RACE_2);
   }
 
   function getStatus() {
@@ -48,32 +45,19 @@ const Debug = observer(() => {
 
   return (
     <Paper className={classes.root}>
-      <h3>{l.DEBUG}</h3>
-      <Button
-        variant="contained"
-        className={classes.button}
-        color="primary"
-        onClick={startRace}
-      >
-        {l.START_RACE}
-      </Button>
-      <Button
-        variant="contained"
-        className={classes.button}
-        color="primary"
-        onClick={restartRace}
-      >
-        {l.RESTART_RACE}
-      </Button>
-      <Button
-        variant="contained"
-        className={classes.button}
-        color="primary"
-        onClick={getStatus}
-      >
-        {l.GET_STATUS}
-      </Button>
-      <StateMachine status="status"/>
+      <h2>{l.DEBUG}</h2>
+      <ButtonGroup color="primary" variant="contained" size="small" aria-label="full-width contained primary button group">
+        <Button onClick={startRace}>
+          {l.START_RACE}
+        </Button>
+        <Button onClick={restartRace}>
+          {l.RESTART_RACE}
+        </Button>
+        <Button onClick={getStatus}>
+          {l.GET_STATUS}
+        </Button>
+      </ButtonGroup>
+      <StateMachine status="status" />
     </Paper>
   );
 });

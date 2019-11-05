@@ -76,6 +76,9 @@ def getStatus(args):
     arduino.write(buf)
     print('command sent to arduino')
 
+def binary(num, pre='0b', length=8, spacer=0):
+    return '{0}{{:{1}>{2}}}'.format(pre, spacer, length).format(bin(num)[2:])
+
 def runArduino(name, socket):
     
     # emit an event
@@ -86,18 +89,27 @@ def runArduino(name, socket):
         if(data_raw != b''):
             print("")
             print("=== Incoming Arduino Data: === ")
+            
+            # bindata = format(data_raw, '#010b')
+            #bindata = ' '.join(["{0:b}".format(x) for x in data_raw])
+            #bindata = bin(int(data_raw,2))
             # print(data_raw) 
+            # bindata = bin(int(data_raw,2))
+            # bindata = format(int(bindata) , '#010b')
             hexx = binascii.hexlify(data_raw)
-            bindata = bin(int(hexx,base=16))        
-            print(commandToString(bindata))          
+            # bindata = bin(int(hexx,base=16))
+            data_str = binary(int(hexx,base=16))
+            # bindata = format(data_raw, '#010b')
+        
+            print(commandToString(data_str)) 
+            
 
             try:                            
                 print("[OK]     Command Sent to frontend")
-                socketio.emit('update', {'data': bindata})
-
+                socketio.emit('update', {'data': data_str})
                 pass
             except:
-                print("[ERROR]  Command Sent to frontend FAILED")
+                print("[ERROR]  Command Sent to frontend FAILED")                
                 pass
 
 if __name__ == '__main__':

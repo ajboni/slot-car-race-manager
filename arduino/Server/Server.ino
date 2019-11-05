@@ -7,19 +7,35 @@ Chrono racer1Tick;
 Chrono racer2Tick;
 Chrono racer3Tick;
 Chrono racer4Tick;
+Chrono countdownTick;
 
-// Pin Mapping
-const int racer1Pin = 1;
-const int racer2Pin = 2;
-const int racer3Pin = 3;
-const int racer4Pin = 4;
+// Pin Mapping (index 0 is not used)
+const int racersPins[5] = {0,11,12,10,9};
+
+// SENSOR STATUS (index 0 is unused)
+bool racersSensors[5] = {0,0,0,0,0};
+bool isAnyRacerSensorHIGH = 0;
 
 ///// === MESAGGES === /////
 
 // Commands
-const byte C_START_RACE =           B00010000;
-const byte C_FALSE_START =          B00100000;
-const byte C_RESTART_RACE =         B11111110;
+const byte C_START_RACE =            B00010000;
+const byte C_START_RACE_1 =          B00010001;
+const byte C_START_RACE_2 =          B00010010;
+const byte C_START_RACE_3 =          B00010011;
+const byte C_START_RACE_4 =          B00010101;
+const byte C_FALSE_START[5] =        { B00110000, B00110001, B00110010, B00110011, B00110101 };
+
+const byte C_RESTART_RACE =          B11111110;
+
+// COUNTDOWN COMMANDS  (0010 0000)
+const byte C_COUNTDOWN =             B00100000;
+const byte C_COUNTDOWN_1 =           B00100001;
+const byte C_COUNTDOWN_2 =           B00100010;
+const byte C_COUNTDOWN_3 =           B00100011;
+const byte C_COUNTDOWN_4 =           B00100100;
+const byte C_COUNTDOWN_GO =          B00100101;
+int currentCountdown = 0;
 
 // Status messages
 const byte C_GET_STATUS =           B11111111;
@@ -28,7 +44,7 @@ const byte C_STATUS_COUNTDOWN =     B11110001;
 const byte C_STATUS_FALSE_START =   B11110010;
 const byte C_STATUS_STARTED =       B11110011;
 const byte C_STATUS_FINISHED =      B11110100;
-
+;
 
 
 // Debug
@@ -68,13 +84,14 @@ unsigned long r = 0;
 void setup() {
   // initialize digital pin LED_BUILTIN as an output.
   pinMode(LED_BUILTIN, OUTPUT);
-  pinMode(racer1Pin, INPUT);
-  pinMode(racer2Pin, INPUT);
-  pinMode(racer3Pin, INPUT);
-  pinMode(racer4Pin, INPUT);
+  pinMode(racersPins[1], INPUT);
+  pinMode(racersPins[2], INPUT);
+  pinMode(racersPins[3], INPUT);
+  pinMode(racersPins[4], INPUT);
   
   Serial.begin(115200);
 }
+
 
 void loop() {
   // Check state Machine
@@ -85,7 +102,7 @@ void loop() {
 }  
 
 void stateMachineRun() {
-  serverCommand =  Serial.read();
+  serverCommand = Serial.read();
   
   // Quick response to status query
   if(serverCommand == C_GET_STATUS) {
@@ -96,7 +113,13 @@ void stateMachineRun() {
     setState(_IDLE);
     Serial.write(raceState);
   }
-  
+
+  checkSensors();
+  if(isAnyRacerSensorHIGH) {
+    digitalWrite(LED_BUILTIN, HIGH);
+  } else { 
+    digitalWrite(LED_BUILTIN, LOW);
+  }
 
   switch (raceState)
   {
@@ -125,13 +148,50 @@ void idle() {
   
   // Start Race 
   if(checkStartRace(serverCommand)) {         
+    countdownTick.restart();
     setState(COUNTDOWN);
     Serial.write(raceState);
+    
   }
 } 
 
+
 /* Run the timer and check for false starts. */
 void countdown() {  
+
+  /* If we reach the 5 seconds countdown advance the state machine */
+  if(countdownTick.hasPassed(5000)) {
+     Serial.write(C_COUNTDOWN_GO);
+     setState(STARTED);
+     Serial.write(raceState);
+     countdownTick.restart();
+     currentCountdown = 0;
+  }
+
+  /* If we have any car doing a false start, notify it, and advance state machine until restart */
+  if(isAnyRacerSensorHIGH > 0) {
+       Serial.write(C_FALSE_START[isAnyRacerSensorHIGH]);
+       setState(FALSE_START);
+       countdownTick.restart();
+       currentCountdown = 0;
+       Serial.write(raceState);
+  }
+  
+  /* Do the countdown */
+  if (countdownTick.hasPassed(1000) && currentCountdown < 1) {
+    currentCountdown = 1;
+    Serial.write(C_COUNTDOWN_1);
+  } else if (countdownTick.hasPassed(2000)  && currentCountdown < 2)  {
+    currentCountdown = 2;
+    Serial.write(C_COUNTDOWN_2);
+  } else if (countdownTick.hasPassed(3000)  && currentCountdown < 3)  {
+    currentCountdown = 3;
+    Serial.write(C_COUNTDOWN_3);
+  } else if (countdownTick.hasPassed(4000)  && currentCountdown < 4)  {
+    currentCountdown = 4;
+    Serial.write(C_COUNTDOWN_4);
+  }
+  
 }
 
 /* Notify Server about false start and wait for new command to re call the countdown. */
@@ -158,6 +218,15 @@ int checkFalseStart() {
   return 0;
 }
 
+void checkSensors() {
+    isAnyRacerSensorHIGH = 0;
+    for (int i = 1; i <= totalRacers; i++) {
+      racersSensors[i] = digitalRead(racersPins[i]);
+      if(racersSensors[i] == HIGH) { isAnyRacerSensorHIGH = i; }
+    }
+}
+
+/* Check for a server command for START RACE, and set the total racers accordingly*/
 bool checkStartRace(byte cmd) {
 
   byte command = stripCommand(cmd);

@@ -8,6 +8,9 @@ import serial
 import os
 import binascii
 import yaml
+import logging
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.ERROR)
 
 config = ""
 with open('../config.yaml') as f:
@@ -24,7 +27,7 @@ BACKEND_IP = config["BACKEND_IP"]
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app, cors_allowed_origins='*', async_mode='threading')
-arduino = serial.Serial(port=COM_PORT, baudrate=COM_BAUDRATE, timeout=2)
+arduino = serial.Serial(port=COM_PORT, baudrate=COM_BAUDRATE, timeout=1)
 
 def commandToString(cmd):
     
@@ -34,6 +37,14 @@ def commandToString(cmd):
         command = "UNKNOWN COMMAND"            
     msg = cmd + " ==> " + command
     return msg
+
+def millisToRaceTime(ms):
+    millis=int((ms)%1000)
+    seconds=int((ms/1000)%60)
+    minutes=int((ms/(1000*60))%60)
+    hours=int((ms/(1000*60*60))%24)
+    time = ("%s:%s:%s.%s" % (str(hours).zfill(2), str(minutes).zfill(2), str(seconds).zfill(2), str(millis).zfill(3)))
+    return time
 
 @app.route("/")
 def hello():
@@ -63,20 +74,21 @@ def handle_message(args):
     
 @socketio.on('getStatus')
 def getStatus(args):
-    print('')
-    print('=== New Message from Frontend === ')
+
     intargs = int(args)
     binargs = bin(args)
-    print('received message:    %s' % commandToString(binargs))
- 
-    # print(bin(int(int(args),base=16)))
-
     buf = bytearray()
     buf.append(args)    
     arduino.write(buf)
+    if(binargs == config["GET_RACE_TIME"]):
+        return
+  
+    print('')
+    print('=== New Message from Frontend === ')
+    print('received message:    %s' % commandToString(binargs))
     print('command sent to arduino')
 
-def binary(num, pre='0b', length=8, spacer=0):
+def binary(num, pre='0b', length=16, spacer=0):
     return '{0}{{:{1}>{2}}}'.format(pre, spacer, length).format(bin(num)[2:])
 
 def runArduino(name, socket):
@@ -85,25 +97,33 @@ def runArduino(name, socket):
     print("=== Incoming Arduino Data: === ")    
     while True:
         #arduino.write(b"Hellos")
-        data_raw = arduino.read()
-        if(data_raw != b''):
-            print("")
-            print("=== Incoming Arduino Data: === ")
-            
-            # bindata = format(data_raw, '#010b')
-            #bindata = ' '.join(["{0:b}".format(x) for x in data_raw])
-            #bindata = bin(int(data_raw,2))
-            # print(data_raw) 
-            # bindata = bin(int(data_raw,2))
-            # bindata = format(int(bindata) , '#010b')
-            hexx = binascii.hexlify(data_raw)
-            # bindata = bin(int(hexx,base=16))
-            data_str = binary(int(hexx,base=16))
-            # bindata = format(data_raw, '#010b')
-        
-            print(commandToString(data_str)) 
-            
+        data_raw = arduino.read(1)
 
+                
+        if(data_raw != b''):
+      
+            hexx = binascii.hexlify(data_raw)
+            data_str = binary(int(hexx,base=16),length=8)
+        
+            # If we need more bytes do it now process 64-bits
+            if(data_str == config["GET_RACE_TIME"]):
+                # print("This shpud print the current time")      
+                data64 = arduino.read(8)
+                hexx = binascii.hexlify(data64)
+                data64_str = binary(int(hexx,base=16),length=64)
+                millis = int(hexx,base=16)
+                time = millisToRaceTime(millis)
+                # print(data64_str)
+                socketio.emit('raceTime', {'data': time})
+                # print(time)
+                continue
+
+            print("")
+            print("=== Incoming Arduino Data: === ")      
+            print(commandToString(data_str)) 
+            print("")
+            
+            ## Else continue with 1 Byte commands                    
             try:                            
                 print("[OK]     Command Sent to frontend")
                 socketio.emit('update', {'data': data_str})

@@ -6,6 +6,7 @@ import l from "../../constants/lang";
 import { Button, ButtonGroup } from "@material-ui/core";
 import store from "../../store";
 import StateMachine from "./debug/state_machine";
+import RaceClock from "./debug/race_clock";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -43,6 +44,12 @@ const Debug = observer(() => {
 
   }
 
+  function getRaceTime() {
+    console.log("getRaceTime");
+    store.getRaceTime();
+
+  }
+
   return (
     <Paper className={classes.root}>
       <h2>{l.DEBUG}</h2>
@@ -56,8 +63,12 @@ const Debug = observer(() => {
         <Button onClick={getStatus}>
           {l.GET_STATUS}
         </Button>
+        <Button onClick={getRaceTime}>
+          {l.GET_RACE_TIME}
+        </Button>
       </ButtonGroup>
       <StateMachine status="status" />
+      <RaceClock />
     </Paper>
   );
 });

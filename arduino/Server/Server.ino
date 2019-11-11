@@ -3,11 +3,9 @@
 // Instanciate a Chrono object.
 Chrono raceTick; 
 Chrono eventTick; 
-Chrono racer1Tick; 
-Chrono racer2Tick;
-Chrono racer3Tick;
-Chrono racer4Tick;
 Chrono countdownTick;
+Chrono racerTick[5] = {};
+
 
 // Pin Mapping (index 0 is not used)
 const int racersPins[5] = {0,11,12,10,9};
@@ -26,7 +24,11 @@ const byte C_START_RACE_3 =          B00010011;
 const byte C_START_RACE_4 =          B00010101;
 const byte C_FALSE_START[5] =        { B00110000, B00110001, B00110010, B00110011, B00110101 };
 
+const byte C_GET_RACE_TIME =         B11111100;
+byte S_CURRENT_RACE_TIME[8] =     { B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000 };
 const byte C_RESTART_RACE =          B11111110;
+
+
 
 // COUNTDOWN COMMANDS  (0010 0000)
 const byte C_COUNTDOWN =             B00100000;
@@ -44,7 +46,7 @@ const byte C_STATUS_COUNTDOWN =     B11110001;
 const byte C_STATUS_FALSE_START =   B11110010;
 const byte C_STATUS_STARTED =       B11110011;
 const byte C_STATUS_FINISHED =      B11110100;
-;
+  
 
 
 // Debug
@@ -90,6 +92,8 @@ void setup() {
   pinMode(racersPins[4], INPUT);
   
   Serial.begin(115200);
+  raceTick.stop();
+  countdownTick.stop();
 }
 
 
@@ -109,12 +113,20 @@ void stateMachineRun() {
     Serial.write(raceState);
   }
 
+  // Restart State Machine
   if(serverCommand == C_RESTART_RACE) {
-    setState(_IDLE);
-    Serial.write(raceState);
+    restartRace();
   }
 
+  // Quick response to Race Time
+   if(serverCommand == C_GET_RACE_TIME) {
+    getRaceTime();
+  }
+
+  // Check and update sensors Status
   checkSensors();
+
+  // For debug only
   if(isAnyRacerSensorHIGH) {
     digitalWrite(LED_BUILTIN, HIGH);
   } else { 
@@ -155,17 +167,47 @@ void idle() {
   }
 } 
 
+/* Restart race, stop clocks and set status as idle */
+void restartRace() {
+    raceTick.stop();
+    countdownTick.stop();
+    setState(_IDLE);
+    Serial.write(raceState);
+}
+
+void startRace() {
+     Serial.write(C_COUNTDOWN_GO);
+     setState(STARTED);     
+     Serial.write(raceState);
+     countdownTick.stop();
+     raceTick.restart();
+
+}
+
+void getRaceTime() {
+    Serial.write(C_GET_RACE_TIME);
+    unsigned long el = raceTick.elapsed();
+    
+    S_CURRENT_RACE_TIME[0] = 0;
+    S_CURRENT_RACE_TIME[1] = 0;
+    S_CURRENT_RACE_TIME[2] = 0;
+    S_CURRENT_RACE_TIME[3] = 0;
+    S_CURRENT_RACE_TIME[7] = el & 0xFF; // 0x78
+    S_CURRENT_RACE_TIME[6] = (el >> 8) & 0xFF; // 0x56
+    S_CURRENT_RACE_TIME[5] = (el >> 16) & 0xFF; // 0x34
+    S_CURRENT_RACE_TIME[4] = (el >> 24) & 0xFF; // 0x12
+    
+   
+    Serial.write(S_CURRENT_RACE_TIME,8);
+}
 
 /* Run the timer and check for false starts. */
 void countdown() {  
 
   /* If we reach the 5 seconds countdown advance the state machine */
   if(countdownTick.hasPassed(5000)) {
-     Serial.write(C_COUNTDOWN_GO);
-     setState(STARTED);
-     Serial.write(raceState);
-     countdownTick.restart();
-     currentCountdown = 0;
+    startRace();
+    currentCountdown = 0;
   }
 
   /* If we have any car doing a false start, notify it, and advance state machine until restart */

@@ -61,6 +61,11 @@ class Store {
     var config = await fetchConfig();
     this.config = config;
     this.socket = socketIOClient.connect(config.BACKEND_IP + ':' + config.BACKEND_PORT); // ip of wifi shield and port of socket
+
+    this.socket.on("raceTime", data => {
+      runInAction(() => this.appState.RACE.currentTime = data.data);
+    });
+
     this.socket.on("update", data => {
       const fullcmd = data.data;
       const command = stripCommand(fullcmd);
@@ -115,7 +120,8 @@ class Store {
   @observable language = c.languages.spa;
   @observable appState = {
     RACE: {
-      status: "stopped"
+      status: "stopped",
+      currentTime: "00:00:00.000"
     },
     RACER: {
       selectedItem: null,
@@ -164,6 +170,15 @@ class Store {
   @action sendMessage(event, params) {
     this.socket.emit(event, Number(params));
   }
+
+  @action getRaceTime() {
+    this.sendMessage("getStatus", this.config.GET_RACE_TIME);
+  }
+
+  @action getStatus() {
+    this.sendMessage("getStatus", this.config.GET_RACE_TIME);
+  }
+
 
 }
 

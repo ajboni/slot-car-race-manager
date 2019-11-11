@@ -34,7 +34,8 @@ let l = new LocalizedStrings({
     ERR_NO_RACER: "Please add at least one racer before continuing...",
     ERR_DUPLICATED_RACER: "ERROR: Racer missing or already assigned.",
     CHOOSE_RACER: "Choose Racer",
-    GET_STATUS: "Get Status"
+    GET_STATUS: "Get Status",
+    GET_RACE_TIME: "Get race time"
   },
   spa: {
     ACTIONS: "Acciones",
@@ -69,7 +70,8 @@ let l = new LocalizedStrings({
     ERR_NO_RACER: "Por favor agregue al menos un piloto antes de continuar...",
     ERR_DUPLICATED_RACER: "ERROR: Piloto ya asignado o inexistente.",
     CHOOSE_RACER: "Elegir Piloto",
-    GET_STATUS: "Obtener Estado"
+    GET_STATUS: "Obtener Estado",
+    GET_RACE_TIME: "Obtener reloj"
   }
 });
 

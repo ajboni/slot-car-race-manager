@@ -12,6 +12,7 @@ import store from "../../store";
 import { getAction } from "../dataTable";
 import Paper from "@material-ui/core/Paper";
 import { makeStyles } from "@material-ui/styles";
+import { toJS } from "mobx";
 import {
   FormControl,
   InputLabel,
@@ -20,9 +21,15 @@ import {
   FormHelperText,
   MenuItem,
   Divider,
-  LinearProgress
+  LinearProgress,
+  Switch,
+  Grid,
+  FormGroup,
+  Modal
 } from "@material-ui/core";
-import { toJS } from "mobx";
+import RaceLive from "../race_live";
+import { width } from "@material-ui/system";
+
 
 const GET_RULES = gql`
   query GetRules {
@@ -50,11 +57,18 @@ const useStyles = makeStyles(theme => ({
   },
   formControl: {
     margin: theme.spacing(1),
-    minWidth: 400
+    minWidth: "90%"
   },
   selectEmpty: {
     marginTop: theme.spacing(2)
+  },
+  modal: {
+    padding: theme.spacing(3, 2),
+    width: "100vw",
+    height: "100vh"
+
   }
+
 }));
 
 const Race = observer(() => {
@@ -99,35 +113,94 @@ const Race = observer(() => {
   if (!!!selectedRuleset) {
     setselectedRuleset(rulesets[0]);
   }
-  console.log(store.appState.RACER);
+  // console.log(store.appState.RACER);
+
+  function showRacersSelection() {
+    return (
+      store.appState.RACE.ranked ?
+        <Racer_Selector ruleset={selectedRuleset} racers={racers} />
+        : null
+    )
+
+  }
+
+  function showStartRaceButton() {
+    if (store.appState.RACE.ranked) { return null }
+    return (
+
+      <div>
+        <Divider light style={{ margin: "20px" }} />
+        <Button
+          variant="contained"
+          className={classes.button}
+          color="primary"
+          onClick={() => store.startRace()}
+        >
+          {l.START_RACE}
+        </Button>
+      </div >
+    )
+  }
 
   return (
     <Paper className={classes.root}>
+      <Modal
+        aria-labelledby="simple-modal-title"
+        aria-describedby="simple-modal-description"
+        open={store.appState.RACE.status == "started"}
+      >
+        <Paper className={classes.modal}>
+          {/* <h2 id="simple-modal-title">Text in a modal</h2> */}
+          {/* <p id="simple-modal-description"></p> */}
+          <RaceLive />
+        </Paper>
+      </Modal>
+
       <h1>{l.RACE}</h1>
+      <Grid
+        container
+        direction="column"
+        justify="space-evenly"
+        alignItems="flex-start"
+      >
 
-      <FormControl className={classes.formControl}>
-        <InputLabel>{l.RULESET}</InputLabel>
-        <Select
-          value={selectedRuleset}
-          onChange={e => {
-            setselectedRuleset(e.target.value);
-          }}
-        >
-          {rulesets.map(ruleset => (
-            <MenuItem value={ruleset} key={ruleset.id}>
-              {ruleset.name} ( {ruleset.total_racers} {l.TOTAL_RACERS} |{" "}
-              {ruleset.total_laps} {l.TOTAL_LAPS} )
+        <div>
+          <Switch
+            checked={store.appState.RACE.ranked}
+            onChange={(e) => store.setRankedRace(e.target.checked)}
+            value={store.appState.RACE.ranked}
+            inputProps={{ 'aria-label': 'secondary checkbox' }}
+            label={l.RANKED_RACE}
+          />
+          {l.RANKED_RACE}
+        </div>
+        <FormControl className={classes.formControl}>
+          <InputLabel>{l.RULESET}</InputLabel>
+          <Select
+            value={selectedRuleset}
+            onChange={e => {
+              setselectedRuleset(e.target.value);
+              store.setSelectedRuleset(e.target.value)
+            }}
+          >
+            {rulesets.map(ruleset => (
+              <MenuItem value={ruleset} key={ruleset.id}>
+                {ruleset.name} ( {ruleset.total_racers} {l.TOTAL_RACERS} |{" "}
+                {ruleset.total_laps} {l.TOTAL_LAPS} )
             </MenuItem>
-          ))}
-        </Select>
-        {/* <FormHelperText>Some important helper text</FormHelperText> */}
-      </FormControl>
-      <br />
-      <br />
-      <br />
+            ))}
+          </Select>
+          {/* <FormHelperText>Some important helper text</FormHelperText> */}
+        </FormControl>
+        <br />
 
-      <Racer_Selector ruleset={selectedRuleset} racers={racers} />
-    </Paper>
+      </Grid>
+
+      {showStartRaceButton()}
+      {showRacersSelection()}
+
+
+    </Paper >
   );
 });
 
@@ -137,7 +210,7 @@ const Racer_Selector = observer(({ ruleset, racers }) => {
   // TODO: IMPLEMENT SHUTTLE:  http://react-material.fusetheme.com/documentation/material-ui-components/transfer-list
   const classes = useStyles();
 
-  // const { loading, error, racers } = useQuery(GET_RACERS);
+  // const {loading, error, racers} = useQuery(GET_RACERS);
   const [selectedRacers, setSelectedRacers] = useState([]);
 
   // const selectedRacers = store.appState.RACE.selectedRacers;
@@ -175,41 +248,44 @@ const Racer_Selector = observer(({ ruleset, racers }) => {
   };
 
   return (
-    <Fragment>
-      <FormControl className={classes.formControl}>
-        {arr.map((e, i) => (
-          <Fragment key={i}>
-            <InputLabel htmlFor="select-multiple">{l.CHOOSE_RACER}</InputLabel>
 
-            <Select
-              error={checkError(i, selectedRacers)}
-              value={selectedRacers[i] ? selectedRacers[i].name : " "}
-              renderValue={() =>
-                selectedRacers[i]
-                  ? `[ ${i.toString()} ] => ${selectedRacers[i].name}`
-                  : " "
-              }
-              onChange={e => {
-                let x = _.clone(selectedRacers);
-                x[i] = e.target.value;
-                setSelectedRacers(x);
-                // setSelectedRacers(i, e.target.value);
-              }}
-            >
-              {racers.map((racer, index) => (
-                <MenuItem value={racer} key={index}>
-                  {racer.name}
-                </MenuItem>
-              ))}
-            </Select>
-            {checkError(i, selectedRacers) ? (
-              <FormHelperText>{l.ERR_DUPLICATED_RACER}</FormHelperText>
-            ) : (
-              ""
-            )}
-          </Fragment>
+    <Fragment>
+      <Grid container >
+        {arr.map((e, i) => (
+          <Grid item xs={12} sm={12} md={4} lg={3} key={i}>
+            <FormControl className={classes.formControl}>
+              <InputLabel htmlFor="select-multiple">{l.CHOOSE_RACER} #{i + 1}</InputLabel>
+
+              <Select
+                error={checkError(i, selectedRacers)}
+                value={selectedRacers[i] ? selectedRacers[i] : ''}
+                renderValue={() =>
+                  selectedRacers[i]
+                    ? `[ ${i.toString()} ] => ${selectedRacers[i].name}`
+                    : " "
+                }
+                onChange={e => {
+                  let x = _.clone(selectedRacers);
+                  x[i] = e.target.value;
+                  setSelectedRacers(x);
+                  // setSelectedRacers(i, e.target.value);
+                }}
+              >
+                {racers.map((racer, index) => (
+                  <MenuItem value={racer} key={index}>
+                    {racer.name}
+                  </MenuItem>
+                ))}
+              </Select>
+              {checkError(i, selectedRacers) ? (
+                <FormHelperText>{l.ERR_DUPLICATED_RACER}</FormHelperText>
+              ) : (
+                  ""
+                )}
+            </FormControl>
+          </Grid>
         ))}
-      </FormControl>
+      </Grid>
       <Divider light style={{ margin: "20px" }} />
       <div>
         <Button

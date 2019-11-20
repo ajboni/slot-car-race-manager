@@ -76,7 +76,7 @@ const Ruleset_edit_screen = ({ item, mode }) => {
   const [racers, setRacers] = useState(item.total_racers);
 
   const [updateRuleset, { data }] = useMutation(EDIT_RULESET);
-  const [deleteRuleset, {}] = useMutation(DELETE_RULESET, {
+  const [deleteRuleset, { }] = useMutation(DELETE_RULESET, {
     refetchQueries: ["GetRules"]
   });
 
@@ -112,6 +112,8 @@ const Ruleset_edit_screen = ({ item, mode }) => {
               if (clean === "") {
                 clean = 1;
               }
+              if (clean > 255) { clean = 255 }
+              if (clean < 1) { clean = 1 }
               setLaps(clean);
             }}
             type="number"

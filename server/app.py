@@ -71,6 +71,15 @@ def handle_message(args):
     buf = bytearray()
     buf.append(args)    
     arduino.write(buf)
+
+@socketio.on('setTotalLaps')
+def handleSetTotalLaps(args):
+    print('received message: %s' % args)
+    print('command sent: SET TOTAL LAPS')
+    buf = bytearray()
+    buf.append(args[0])   
+    buf.append(args[1])
+    arduino.write(buf)
     
 @socketio.on('getStatus')
 def getStatus(args):
@@ -80,6 +89,8 @@ def getStatus(args):
     buf = bytearray()
     buf.append(args)    
     arduino.write(buf)
+
+    # To avoid spamming console with time stuff
     if(binargs == config["GET_RACE_TIME"]):
         return
   
@@ -106,7 +117,7 @@ def runArduino(name, socket):
             data_str = binary(int(hexx,base=16),length=8)
         
             # If we need more bytes do it now process 64-bits
-            if(data_str == config["GET_RACE_TIME"]):
+            if(data_str == config["GET_RACE_TIME"] ):
                 # print("This shpud print the current time")      
                 data64 = arduino.read(8)
                 hexx = binascii.hexlify(data64)

@@ -50,6 +50,8 @@ const Debug = observer(() => {
 
   }
 
+
+
   return (
     <Paper className={classes.root}>
       <h2>{l.DEBUG}</h2>

@@ -17,7 +17,7 @@ import { observer } from "mobx-react";
 import { Route, Link, BrowserRouter as Router } from "react-router-dom";
 import l from "../constants/lang";
 
-const drawerWidth = 240;
+const drawerWidth = 200;
 
 const useStyles = makeStyles(theme => ({
   root: {

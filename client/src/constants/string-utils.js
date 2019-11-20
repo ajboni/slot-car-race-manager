@@ -232,7 +232,7 @@ export function unescapeHtml(str) {
  * Escape string into unicode sequences
  */
 export function escapeUnicode(str, shouldEscapePrintable) {
-  return str.replace(/[\s\S]/g, function(ch) {
+  return str.replace(/[\s\S]/g, function (ch) {
     // skip printable ASCII chars if we should not escape them
     if (!shouldEscapePrintable && /[\x20-\x7E]/.test(ch)) {
       return ch;
@@ -265,7 +265,7 @@ export function removeNonASCII(str) {
 export function interpolate(template, replacements, syntax) {
   var stache = /\{\{(\w+)\}\}/g; //mustache-like
 
-  var replaceFn = function(match, prop) {
+  var replaceFn = function (match, prop) {
     return prop in replacements ? replacements[prop] : "";
   };
 
@@ -431,4 +431,10 @@ export function countWords(str) {
 
 export function TextHTMLtoText(html) {
   return html.replace(/<(?:.|\n)*?>/gm, "");
+}
+
+export function createBinaryString(num, bits) {
+  let bin = num.toString(2)
+  bin = "0b" + bin.padStart(bits, "0");
+  return bin;
 }

@@ -1,10 +1,11 @@
-import { observable, configure, action, runInAction } from "mobx";
+import { observable, configure, action, runInAction, extendObservable } from "mobx";
 import * as c from "./constants/constants";
 import l from "./constants/lang";
 import { settings as s } from "./constants/constants";
 import socketIOClient from "socket.io-client";
 import configFile from "../../config.yaml"
 import YAML from 'yaml'
+import { createBinaryString } from "./constants/string-utils"
 
 import Bleep1 from "./audio/BLEEP1.wav";
 import Bleep2 from "./audio/BLEEP2.wav";
@@ -121,7 +122,9 @@ class Store {
   @observable appState = {
     RACE: {
       status: "stopped",
-      currentTime: "00:00:00.000"
+      currentTime: "00:00:00.000",
+      selectedRuleset: null,
+      ranked: false,
     },
     RACER: {
       selectedItem: null,
@@ -133,6 +136,10 @@ class Store {
     },
   };
 
+  @action startRace() {
+    this.appState.RACE.status = "started"
+  }
+
   /** Gets an Item from local storage, returning an optional default value */
   @action getItem(item, defaultValue = "") {
     let _item = localStorage.getItem(item);
@@ -140,6 +147,12 @@ class Store {
       _item = defaultValue;
     }
     return _item;
+  }
+
+  @action setSelectedRuleset(ruleset) {
+    this.appState.RACE.selectedRuleset = ruleset;
+    this.setTotalLaps();
+
   }
 
   @action setLanguage(lang, forceReload = true) {
@@ -171,8 +184,21 @@ class Store {
     this.socket.emit(event, Number(params));
   }
 
+  @action setRankedRace(value) {
+    this.appState.RACE.ranked = value;
+  }
+
   @action getRaceTime() {
     this.sendMessage("getStatus", this.config.GET_RACE_TIME);
+  }
+
+  @action setTotalLaps() {
+    let arr = [];
+    arr.push(Number(this.config.SET_TOTAL_LAPS));
+    arr.push(Number(this.appState.RACE.selectedRuleset.total_laps))
+    console.log(arr)
+    this.socket.emit("setTotalLaps", arr);
+
   }
 
   @action getStatus() {
